@@ -1,0 +1,26 @@
+{
+    "name": "datalinx/php-upn-qr-generator",
+    "description": "QR code generator for Slovenian UPN payment order.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "DataLinx\\PhpUpnQrGenerator\\": "src/",
+            "DataLinx\\PhpUpnQrGenerator\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "DataLinx",
+            "email": "info@datalinx.si"
+        }
+    ],
+    "require": {
+        "ext-mbstring": "*",
+        "bacon/bacon-qr-code": "^2.0",
+        "khanamiryan/qrcode-detector-decoder": "1.0.5.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
