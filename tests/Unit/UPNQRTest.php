@@ -43,7 +43,7 @@ class UPNQRTest extends TestCase
         $this->QR->setRecipientCity("Ljubljana");
     }
 
-    protected function setUp() :void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -94,23 +94,23 @@ class UPNQRTest extends TestCase
         $explodedText = explode("\n", $text);
         $this->assertSame($explodedText[0], UPNQR::VODILNI_SLOG);
         $this->assertSame($explodedText[1], $this->QR->getPayerIban());
-        $this->assertSame($explodedText[2],$this->QR->getDeposit() ? 'X' : '');
-        $this->assertSame($explodedText[3],$this->QR->getWithdraw() ? 'X' : '');
-        $this->assertSame($explodedText[4],$this->QR->getPayerReference());
-        $this->assertSame($explodedText[5],$this->QR->getPayerName());
-        $this->assertSame($explodedText[6],$this->QR->getPayerStreetAddress());
-        $this->assertSame($explodedText[7],$this->QR->getPayerCity());
-        $this->assertSame($explodedText[8],$this->QR->getAmount(true));
-        $this->assertSame($explodedText[9],$this->QR->getPaymentDate(true));
-        $this->assertSame($explodedText[10],$this->QR->getUrgent() ? 'X' : '');
-        $this->assertSame($explodedText[11],$this->QR->getPurposeCode());
+        $this->assertSame($explodedText[2], $this->QR->getDeposit() ? 'X' : '');
+        $this->assertSame($explodedText[3], $this->QR->getWithdraw() ? 'X' : '');
+        $this->assertSame($explodedText[4], $this->QR->getPayerReference());
+        $this->assertSame($explodedText[5], $this->QR->getPayerName());
+        $this->assertSame($explodedText[6], $this->QR->getPayerStreetAddress());
+        $this->assertSame($explodedText[7], $this->QR->getPayerCity());
+        $this->assertSame($explodedText[8], $this->QR->getAmount(true));
+        $this->assertSame($explodedText[9], $this->QR->getPaymentDate(true));
+        $this->assertSame($explodedText[10], $this->QR->getUrgent() ? 'X' : '');
+        $this->assertSame($explodedText[11], $this->QR->getPurposeCode());
         //$this->assertSame($explodedText[12],"Predračun 111");
-        $this->assertSame($explodedText[13],$this->QR->getPaymentDueDate(true));
-        $this->assertSame($explodedText[14],$this->QR->getRecipientIban());
-        $this->assertSame($explodedText[15],$this->QR->getRecipientReference());
-        $this->assertSame($explodedText[16],$this->QR->getRecipientName());
-        $this->assertSame($explodedText[17],$this->QR->getRecipientStreetAddress());
-        $this->assertSame($explodedText[18],$this->QR->getRecipientCity());
+        $this->assertSame($explodedText[13], $this->QR->getPaymentDueDate(true));
+        $this->assertSame($explodedText[14], $this->QR->getRecipientIban());
+        $this->assertSame($explodedText[15], $this->QR->getRecipientReference());
+        $this->assertSame($explodedText[16], $this->QR->getRecipientName());
+        $this->assertSame($explodedText[17], $this->QR->getRecipientStreetAddress());
+        $this->assertSame($explodedText[18], $this->QR->getRecipientCity());
     }
 
     /**
@@ -139,11 +139,11 @@ class UPNQRTest extends TestCase
         ];
 
         foreach ($wrongCases as $case) {
-                try {
-                    $this->QRR->setPayerIban($case[0]);
-                } catch (Exception $e) {
-                    $this->assertEquals($case[1], $e->getMessage());
-                }
+            try {
+                $this->QRR->setPayerIban($case[0]);
+            } catch (Exception $e) {
+                $this->assertEquals($case[1], $e->getMessage());
+            }
         }
     }
 

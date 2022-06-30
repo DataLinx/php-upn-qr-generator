@@ -10,7 +10,7 @@ use Exception;
 
 class UPNQR
 {
-    const VODILNI_SLOG = "UPNQR";
+    public const VODILNI_SLOG = "UPNQR";
 
     protected string $payerIban;
     protected bool $deposit;
@@ -110,7 +110,7 @@ class UPNQR
         ];
 
         foreach ($params as $param) {
-            if(!isset($this->{$param})) {
+            if (!isset($this->{$param})) {
                 throw new Exception("$param is required.");
             }
         }
@@ -134,7 +134,7 @@ class UPNQR
     public function setPayerIban(string $payerIban): void
     {
         $payerIban = trim(str_replace(' ', '', $payerIban));
-        if(!preg_match('/^[a-z]{2}\d{17}$/i', $payerIban)) {
+        if (!preg_match('/^[a-z]{2}\d{17}$/i', $payerIban)) {
             throw new Exception("ibanPlacnika must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard).");
         }
         $this->payerIban = $payerIban;
@@ -196,15 +196,15 @@ class UPNQR
     public function setPayerReference(string $payerReference): void
     {
         $payerReference = trim($payerReference);
-        if(!preg_match('/^(SI|RF)\d{2}/', $payerReference)) {
+        if (!preg_match('/^(SI|RF)\d{2}/', $payerReference)) {
             throw new Exception("referencaPlacnika must start with SI or RF and then 2 digits and other digits or characters.");
         }
-        if(mb_strlen($payerReference) > 26) {
+        if (mb_strlen($payerReference) > 26) {
             throw new Exception("referencaPlacnika should not have more than 26 characters.");
         }
 
         // source: http://www.firmar.si/index.jsp?pg=nasveti-clanki/upn/referenca-si-in-rf-za-univerzalni-placilni-nalog-upn
-        if(preg_match('/^SI/', $payerReference) && substr_count( $payerReference, '-') > 2) {
+        if (preg_match('/^SI/', $payerReference) && substr_count($payerReference, '-') > 2) {
             throw new Exception("referencaPlacnika that starts with SI should not have more than two dashes.");
         }
         $this->payerReference = $payerReference;
@@ -228,7 +228,7 @@ class UPNQR
     public function setPayerName(string $payerName): void
     {
         $payerName = trim($payerName);
-        if(mb_strlen($payerName) > 33) {
+        if (mb_strlen($payerName) > 33) {
             throw new Exception("imePlacnika should not have more than 33 characters.");
         }
         $this->payerName = $payerName;
@@ -252,7 +252,7 @@ class UPNQR
     public function setPayerStreetAddress(string $payerStreetAddress): void
     {
         $payerStreetAddress = trim($payerStreetAddress);
-        if(mb_strlen($payerStreetAddress) > 33) {
+        if (mb_strlen($payerStreetAddress) > 33) {
             throw new Exception("ulicaPlacnika should not have more than 33 characters.");
         }
         $this->payerStreetAddress = $payerStreetAddress;
@@ -276,7 +276,7 @@ class UPNQR
     public function setPayerCity(string $payerCity): void
     {
         $payerCity = trim($payerCity);
-        if(mb_strlen($payerCity) > 33) {
+        if (mb_strlen($payerCity) > 33) {
             throw new Exception("krajPlacnika should not have more than 33 characters.");
         }
         $this->payerCity = $payerCity;
@@ -288,8 +288,8 @@ class UPNQR
      */
     public function getAmount(bool $upnFormat)
     {
-        if($upnFormat) {
-            return str_pad(number_format($this->amount,2,"",""), 11, 0, STR_PAD_LEFT);
+        if ($upnFormat) {
+            return str_pad(number_format($this->amount, 2, "", ""), 11, 0, STR_PAD_LEFT);
         }
         return $this->amount;
     }
@@ -303,7 +303,7 @@ class UPNQR
      */
     public function setAmount(float $amount): void
     {
-        if($amount <= 0 or $amount > 999999999) {
+        if ($amount <= 0 or $amount > 999999999) {
             throw new Exception("znesek should be more than 0 and less than 1000000000");
         }
         $this->amount = $amount;
@@ -315,7 +315,7 @@ class UPNQR
      */
     public function getPaymentDate(bool $upnFormat = false): string
     {
-        if($upnFormat) {
+        if ($upnFormat) {
             return date('d.m.Y', strtotime($this->paymentDate));
         }
         return $this->paymentDate;
@@ -331,10 +331,10 @@ class UPNQR
     public function setPaymentDate(string $paymentDate): void
     {
         $paymentDate = trim($paymentDate);
-        if(!preg_match('/^\d{4}-\d{2}-\d{2}$/', $paymentDate)) {
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $paymentDate)) {
             throw new Exception("datumPlacila should be in the YYYY-MM-DD format.");
         }
-        if(!strtotime($paymentDate)){
+        if (!strtotime($paymentDate)) {
             throw new Exception("The provided datumPlacila is not a valid date.");
         }
         $this->paymentDate = $paymentDate;
@@ -377,7 +377,7 @@ class UPNQR
     public function setPurposeCode(string $purposeCode): void
     {
         $purposeCode = trim($purposeCode);
-        if(!preg_match('/^[A-Z]{4}$/', $purposeCode)) {
+        if (!preg_match('/^[A-Z]{4}$/', $purposeCode)) {
             throw new Exception("kodaNamena must have exactly four uppercase characters [A-Z].");
         }
         $this->purposeCode = $purposeCode;
@@ -401,7 +401,7 @@ class UPNQR
     public function setPaymentPurpose(string $paymentPurpose): void
     {
         $paymentPurpose = trim($paymentPurpose);
-        if(mb_strlen($paymentPurpose) > 42) {
+        if (mb_strlen($paymentPurpose) > 42) {
             throw new Exception("namenPlacila should not have more than 42 characters.");
         }
         $this->paymentPurpose = $paymentPurpose;
@@ -413,7 +413,7 @@ class UPNQR
      */
     public function getPaymentDueDate(bool $upnFormat): string
     {
-        if($upnFormat) {
+        if ($upnFormat) {
             return date('d.m.Y', strtotime($this->paymentDueDate));
         }
         return $this->paymentDueDate;
@@ -429,10 +429,10 @@ class UPNQR
     public function setPaymentDueDate(string $paymentDueDate): void
     {
         $paymentDueDate = trim($paymentDueDate);
-        if(!preg_match('/^\d{4}-\d{2}-\d{2}$/', $paymentDueDate)) {
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $paymentDueDate)) {
             throw new Exception("rokPlacila should be in the YYYY-MM-DD format.");
         }
-        if(!strtotime($paymentDueDate)){
+        if (!strtotime($paymentDueDate)) {
 //            throw new Exception("rokPlacila " . $rokPlacila . " is not a valid date.");
             throw new Exception("The provided rokPlacila is not a valid date.");
         }
@@ -457,7 +457,7 @@ class UPNQR
     public function setRecipientIban(string $recipientIban): void
     {
         $recipientIban = trim(str_replace(' ', '', $recipientIban));
-        if(!preg_match('/^[a-z]{2}\d{17}$/i', $recipientIban)) {
+        if (!preg_match('/^[a-z]{2}\d{17}$/i', $recipientIban)) {
             throw new Exception("ibanPrejemnika must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard).");
         }
         $this->recipientIban = $recipientIban;
@@ -481,13 +481,13 @@ class UPNQR
     public function setRecipientReference(string $recipientReference): void
     {
         $recipientReference = trim($recipientReference);
-        if(!preg_match('/^(SI|RF)\d{2}/', $recipientReference)) {
+        if (!preg_match('/^(SI|RF)\d{2}/', $recipientReference)) {
             throw new Exception("referencaPrejemnika must start with SI or RF and then 2 digits and other digits or characters.");
         }
-        if(mb_strlen($recipientReference) > 26) {
+        if (mb_strlen($recipientReference) > 26) {
             throw new Exception("referencaPrejemnika should not have more than 26 characters.");
         }
-        if(preg_match('/^SI/', $recipientReference) && substr_count( $recipientReference, '-') > 2) {
+        if (preg_match('/^SI/', $recipientReference) && substr_count($recipientReference, '-') > 2) {
             throw new Exception("referencaPrejemnika that starts with SI should not have more than two dashes.");
         }
         $this->recipientReference = $recipientReference;
@@ -511,7 +511,7 @@ class UPNQR
     public function setRecipientName(string $recipientName): void
     {
         $recipientName = trim($recipientName);
-        if(mb_strlen($recipientName) > 33) {
+        if (mb_strlen($recipientName) > 33) {
             throw new Exception("imePrejemnika should not have more than 33 characters.");
         }
         $this->recipientName = $recipientName;
@@ -535,7 +535,7 @@ class UPNQR
     public function setRecipientStreetAddress(string $recipientStreetAddress): void
     {
         $recipientStreetAddress = trim($recipientStreetAddress);
-        if(mb_strlen($recipientStreetAddress) > 33) {
+        if (mb_strlen($recipientStreetAddress) > 33) {
             throw new Exception("ulicaPrejemnika should not have more than 33 characters.");
         }
         $this->recipientStreetAddress = $recipientStreetAddress;
@@ -559,7 +559,7 @@ class UPNQR
     public function setRecipientCity(string $recipientCity): void
     {
         $recipientCity = trim($recipientCity);
-        if(mb_strlen($recipientCity) > 33) {
+        if (mb_strlen($recipientCity) > 33) {
             throw new Exception("krajPrejemnika should not have more than 33 characters.");
         }
         $this->recipientCity = $recipientCity;
