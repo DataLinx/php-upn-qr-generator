@@ -7,9 +7,6 @@ use Exception;
 use PHPUnit\Framework\TestCase;
 use Zxing\QrReader;
 
-include "vendor/autoload.php";
-
-
 class UPNQRTest extends TestCase
 {
     private UPNQR $QR;

@@ -5,7 +5,11 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "DataLinx\\PhpUpnQrGenerator\\": "src/",
+            "DataLinx\\PhpUpnQrGenerator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "DataLinx\\PhpUpnQrGenerator\\Tests\\": "tests/"
         }
     },
