@@ -24,7 +24,45 @@ composer require datalinx/php-upn-qr-generator
 ````
 
 ## Usage
+In order to generate a QR code you need to pass at least these parameters:
+* payerReference
+* amount
+* purposeCode
+* paymentPurpose
+* recipientIban
+* recipientName
+* recipientStreetAddress
+* recipientCity
+
+See class docblocks for accepted parameter formats and length.
+
+### Sample code
 ```php
+// Create an instance of the UPNQR class
+$QR = new UPNQR();
+
+// Set parameters
+$QR->setPayerReference("SI00225268-32526-222");
+$QR->setPayerName("Janez Novak");
+$QR->setPayerStreetAddress("Lepa ulica 33");
+$QR->setPayerCity("Koper");
+$QR->setAmount(55.58);
+$QR->setPaymentDate("2022-06-16");
+$QR->setUrgent(false);
+$QR->setPurposeCode("GDSV");
+$QR->setPaymentPurpose("Predračun 111");
+$QR->setRecipientIban("SI56020360253863406");
+$QR->setRecipientReference("SI081236-17-34565");
+$QR->setRecipientName("Podjetje d.o.o.");
+$QR->setRecipientStreetAddress("Neka ulica 5");
+$QR->setRecipientCity("Ljubljana");
+
+try {
+    // Generate QR code image of type svg (use .png for PNG images)
+    $QR->generateQrCode("./qrcode.svg");
+} catch (Exception $e) {
+    throw new Exception("Error generating QR code image: " . $e->getMessage());
+}
 
 ```
 
