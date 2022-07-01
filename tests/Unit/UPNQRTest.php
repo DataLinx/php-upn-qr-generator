@@ -24,14 +24,14 @@ class UPNQRTest extends TestCase
         $this->QR->setDeposit(true);
         $this->QR->setWithdraw(false);
         $this->QR->setPayerReference("SI00225268-32526-222");
-        $this->QR->setPayerName("Omer d.o.o.");
+        $this->QR->setPayerName("Janez Novak");
         $this->QR->setPayerStreetAddress("Lepa ulica 33");
-        $this->QR->setPayerCity("Izola");
+        $this->QR->setPayerCity("Koper");
         $this->QR->setAmount(55.586);
         $this->QR->setPaymentDate("2022-06-16");
         $this->QR->setUrgent(false);
         $this->QR->setPurposeCode("COST");
-        $this->QR->setPaymentPurpose("Predračun 111");
+        $this->QR->setPaymentPurpose("Predracun 111");
         $this->QR->setPaymentDueDate("2022-06-30");
         $this->QR->setRecipientIban("SI56020360253863406");
         $this->QR->setRecipientReference("SI081236-17-34565");
@@ -40,14 +40,22 @@ class UPNQRTest extends TestCase
         $this->QR->setRecipientCity("Ljubljana");
     }
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         parent::setUp();
 
-        // create an instance of the UPNQR class and set the parameters
+        // Create build folder if it doesn't exist
+        if (!file_exists("build")) {
+            mkdir("build");
+        }
+
+        // Create an instance of the UPNQR class and set the parameters
         $this->setDefaultQr();
 
-        // create a second instance of the UNPQR class without setting the parameters
+        // Create a second instance of the UNPQR class without setting the parameters
         $this->QRR = new UPNQR();
     }
 
@@ -57,15 +65,15 @@ class UPNQRTest extends TestCase
         $this->assertEquals("X", $this->QR->getDeposit() ? 'X' : '');
         $this->assertEquals("", $this->QR->getWithdraw() ? 'X' : '');
         $this->assertEquals("SI00225268-32526-222", $this->QR->getPayerReference());
-        $this->assertEquals("Omer d.o.o.", $this->QR->getPayerName());
+        $this->assertEquals("Janez Novak", $this->QR->getPayerName());
         $this->assertEquals("Lepa ulica 33", $this->QR->getPayerStreetAddress());
-        $this->assertEquals("Izola", $this->QR->getPayerCity());
-        $this->assertEquals("00000005559", $this->QR->getAmount(true));
-        $this->assertEquals("16.06.2022", $this->QR->getPaymentDate(true));
+        $this->assertEquals("Koper", $this->QR->getPayerCity());
+        $this->assertEquals("00000005559", $this->QR->getFormattedAmount());
+        $this->assertEquals("16.06.2022", $this->QR->formatDate($this->QR->getPaymentDate()));
         $this->assertEquals("", $this->QR->getUrgent() ? 'X' : '');
         $this->assertEquals("COST", $this->QR->getPurposeCode() ? strtoupper($this->QR->getPurposeCode()) : "OTHR");
-        $this->assertEquals("Predračun 111", $this->QR->getPaymentPurpose());
-        $this->assertEquals("30.06.2022", $this->QR->getPaymentDueDate(true));
+        $this->assertEquals("Predracun 111", $this->QR->getPaymentPurpose());
+        $this->assertEquals("30.06.2022", $this->QR->formatDate($this->QR->getPaymentDueDate()));
         $this->assertEquals("SI56020360253863406", $this->QR->getRecipientIban());
         $this->assertEquals("SI081236-17-34565", $this->QR->getRecipientReference());
         $this->assertEquals("Podjetje d.o.o.", $this->QR->getRecipientName());
@@ -73,6 +81,52 @@ class UPNQRTest extends TestCase
         $this->assertEquals("Ljubljana", $this->QR->getRecipientCity());
     }
 
+    /**
+     * @throws Exception
+     */
+    public function testGenerateQrCodeException()
+    {
+        // We pass an invalid filename (typo in path)
+        $this->expectException("Exception");
+        $this->QR->generateQrCode("./buid/qrcode.svg");
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testCheckRequiredParametersException()
+    {
+        // We instantiate the UPNQR object without setting the recipient IBAN number
+        $UPNQR = new UPNQR();
+
+        $UPNQR->setPayerIban("SI56020170014356205");
+        $UPNQR->setDeposit(true);
+        $UPNQR->setWithdraw(false);
+        $UPNQR->setPayerReference("SI00225268-32526-222");
+        $UPNQR->setPayerName("Janez Novak");
+        $UPNQR->setPayerStreetAddress("Lepa ulica 33");
+        $UPNQR->setPayerCity("Koper");
+        $UPNQR->setAmount(55.586);
+        $UPNQR->setPaymentDate("2022-06-16");
+        $UPNQR->setUrgent(false);
+        $UPNQR->setPurposeCode("COST");
+        $UPNQR->setPaymentPurpose("Predračun 111");
+        $UPNQR->setPaymentDueDate("2022-06-30");
+        $UPNQR->setRecipientReference("SI081236-17-34565");
+        $UPNQR->setRecipientName("Podjetje d.o.o.");
+        $UPNQR->setRecipientStreetAddress("Neka ulica 5");
+        $UPNQR->setRecipientCity("Ljubljana");
+
+        try {
+            $UPNQR->checkRequiredParameters();
+        } catch (Exception $e) {
+            $this->assertEquals("recipientIban is required.", $e->getMessage());
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
     public function testFileOutput()
     {
         try {
@@ -86,7 +140,9 @@ class UPNQRTest extends TestCase
     public function testGeneratedImageContents()
     {
         $qrcode = new QrReader("./build/qrcode.svg");
-        $text = $qrcode->text(); //return decoded text from QR Code
+
+        //return decoded text from QR Code
+        $text = $qrcode->text();
 
         $explodedText = explode("\n", $text);
         $this->assertSame($explodedText[0], UPNQR::VODILNI_SLOG);
@@ -97,12 +153,12 @@ class UPNQRTest extends TestCase
         $this->assertSame($explodedText[5], $this->QR->getPayerName());
         $this->assertSame($explodedText[6], $this->QR->getPayerStreetAddress());
         $this->assertSame($explodedText[7], $this->QR->getPayerCity());
-        $this->assertSame($explodedText[8], $this->QR->getAmount(true));
-        $this->assertSame($explodedText[9], $this->QR->getPaymentDate(true));
+        $this->assertSame($explodedText[8], $this->QR->getFormattedAmount());
+        $this->assertSame($explodedText[9], $this->QR->formatDate($this->QR->getPaymentDate()));
         $this->assertSame($explodedText[10], $this->QR->getUrgent() ? 'X' : '');
         $this->assertSame($explodedText[11], $this->QR->getPurposeCode());
-        //$this->assertSame($explodedText[12],"Predračun 111");
-        $this->assertSame($explodedText[13], $this->QR->getPaymentDueDate(true));
+        $this->assertSame($explodedText[12], $this->QR->getPaymentPurpose());
+        $this->assertSame($explodedText[13], $this->QR->formatDate($this->QR->getPaymentDueDate()));
         $this->assertSame($explodedText[14], $this->QR->getRecipientIban());
         $this->assertSame($explodedText[15], $this->QR->getRecipientReference());
         $this->assertSame($explodedText[16], $this->QR->getRecipientName());
@@ -130,9 +186,9 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            ["SI5602017001435620", "ibanPlacnika must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard)."],
-            ["5602017001435620", "ibanPlacnika must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard)."],
-            ["5456020170014356205", "ibanPlacnika must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard)."],
+            ["SI5602017001435620", "Payer IBAN must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard)."],
+            ["5602017001435620", "Payer IBAN must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard)."],
+            ["5456020170014356205", "Payer IBAN must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard)."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -196,14 +252,14 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            ["SI", "referencaPlacnika must start with SI or RF and then 2 digits and other digits or characters."],
-            ["RF", "referencaPlacnika must start with SI or RF and then 2 digits and other digits or characters."],
-            ["SI9", "referencaPlacnika must start with SI or RF and then 2 digits and other digits or characters."],
-            ["RF9", "referencaPlacnika must start with SI or RF and then 2 digits and other digits or characters."],
-            ["SO99", "referencaPlacnika must start with SI or RF and then 2 digits and other digits or characters."],
-            ["TF99", "referencaPlacnika must start with SI or RF and then 2 digits and other digits or characters."],
-            ["SI9912345678912345678912345", "referencaPlacnika should not have more than 26 characters."],
-            ["SI9965465-4156-15615-615", "referencaPlacnika that starts with SI should not have more than two dashes."],
+            ["SI", "Payer reference must start with SI or RF and then 2 digits and other digits or characters."],
+            ["RF", "Payer reference must start with SI or RF and then 2 digits and other digits or characters."],
+            ["SI9", "Payer reference must start with SI or RF and then 2 digits and other digits or characters."],
+            ["RF9", "Payer reference must start with SI or RF and then 2 digits and other digits or characters."],
+            ["SO99", "Payer reference must start with SI or RF and then 2 digits and other digits or characters."],
+            ["TF99", "Payer reference must start with SI or RF and then 2 digits and other digits or characters."],
+            ["SI9912345678912345678912345", "Payer reference should not have more than 26 characters."],
+            ["SI9965465-4156-15615-615", "Payer references that starts with SI should not have more than two dashes."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -234,7 +290,7 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            [str_repeat('a', 34), "imePlacnika should not have more than 33 characters."],
+            [str_repeat('a', 34), "Payer name should not have more than 33 characters."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -264,7 +320,7 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            [str_repeat('a', 34), "ulicaPlacnika should not have more than 33 characters."],
+            [str_repeat('a', 34), "Payer street address should not have more than 33 characters."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -294,7 +350,7 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            [str_repeat('a', 34), "krajPlacnika should not have more than 33 characters."],
+            [str_repeat('a', 34), "Payer city should not have more than 33 characters."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -323,13 +379,13 @@ class UPNQRTest extends TestCase
 
         foreach ($correctCases as $case) {
             $this->QRR->setAmount($case[0]);
-            $this->assertEquals($case[1], $this->QRR->getAmount(true));
+            $this->assertEquals($case[1], $this->QRR->getFormattedAmount());
         }
 
         $wrongCases = [
-            [0, "znesek should be more than 0 and less than 1000000000"],
-            [-1, "znesek should be more than 0 and less than 1000000000"],
-            [1000000000, "znesek should be more than 0 and less than 1000000000"],
+            [0, "Amount should be more than 0 and less than 1000000000"],
+            [-1, "Amount should be more than 0 and less than 1000000000"],
+            [1000000000, "Amount should be more than 0 and less than 1000000000"],
         ];
 
         foreach ($wrongCases as $case) {
@@ -341,6 +397,9 @@ class UPNQRTest extends TestCase
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function testAmount()
     {
         $correctCases = [
@@ -350,7 +409,7 @@ class UPNQRTest extends TestCase
 
         foreach ($correctCases as $case) {
             $this->QRR->setAmount($case[0]);
-            $this->assertEquals($case[1], $this->QRR->getAmount(false));
+            $this->assertEquals($case[1], $this->QRR->getAmount());
         }
     }
 
@@ -368,16 +427,16 @@ class UPNQRTest extends TestCase
 
         foreach ($correctCases as $case) {
             $this->QRR->setPaymentDate($case[0]);
-            $this->assertEquals($case[1], $this->QRR->getPaymentDate(true));
+            $this->assertEquals($case[1], $this->QRR->formatDate($this->QRR->getPaymentDate()));
         }
 
         $wrongCases = [
-            ["202-05-06", "datumPlacila should be in the YYYY-MM-DD format."],
-            ["2022-05-6", "datumPlacila should be in the YYYY-MM-DD format."],
-            ["2022-5-06", "datumPlacila should be in the YYYY-MM-DD format."],
-            ["2022-13-08", "The provided datumPlacila is not a valid date."],
-            ["2022-05-32", "The provided datumPlacila is not a valid date."],
-            ["1969-12-31", "The provided datumPlacila is not a valid date."],
+            ["202-05-06", "Payment date should be in the YYYY-MM-DD format."],
+            ["2022-05-6", "Payment date should be in the YYYY-MM-DD format."],
+            ["2022-5-06", "Payment date should be in the YYYY-MM-DD format."],
+            ["2022-13-08", "The provided payment date is not a valid date."],
+            ["2022-05-32", "The provided payment date is not a valid date."],
+            ["1969-12-31", "The provided payment date is not a valid date."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -396,14 +455,14 @@ class UPNQRTest extends TestCase
     public function testPaymentDate()
     {
         $correctCases = [
-            ["1970-01-01", "1970-01-01"],
-            ["2022-06-01", "2022-06-01"],
-            ["2500-12-12", "2500-12-12"],
+            ["1970-01-01", "01.01.1970"],
+            ["2022-06-01", "01.06.2022"],
+            ["2500-12-12", "12.12.2500"],
         ];
 
         foreach ($correctCases as $case) {
             $this->QRR->setPaymentDate($case[0]);
-            $this->assertEquals($case[1], $this->QRR->getPaymentDate(false));
+            $this->assertEquals($case[1], $this->QRR->formatDate($this->QRR->getPaymentDate()));
         }
     }
 
@@ -440,10 +499,10 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            ["", "kodaNamena must have exactly four uppercase characters [A-Z]."],
-            [" ", "kodaNamena must have exactly four uppercase characters [A-Z]."],
-            ["RTF ", "kodaNamena must have exactly four uppercase characters [A-Z]."],
-            ["RTFDE", "kodaNamena must have exactly four uppercase characters [A-Z]."],
+            ["", "Purpose code must have exactly four uppercase characters [A-Z]."],
+            [" ", "Purpose code must have exactly four uppercase characters [A-Z]."],
+            ["RTF ", "Purpose code must have exactly four uppercase characters [A-Z]."],
+            ["RTFDE", "Purpose code must have exactly four uppercase characters [A-Z]."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -474,7 +533,7 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            [str_repeat("a", 43), "namenPlacila should not have more than 42 characters."],
+            [str_repeat("a", 43), "Payment purpose should not have more than 42 characters."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -490,7 +549,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testPaymentDueDateUpnFormat()
+    public function testPaymentDueDate()
     {
         $correctCases = [
             ["2022-01-01", "01.01.2022"],
@@ -500,15 +559,15 @@ class UPNQRTest extends TestCase
 
         foreach ($correctCases as $case) {
             $this->QRR->setPaymentDueDate($case[0]);
-            $this->assertEquals($case[1], $this->QRR->getPaymentDueDate(true));
+            $this->assertEquals($case[1], $this->QRR->formatDate($this->QRR->getPaymentDueDate()));
         }
 
         $wrongCases = [
-            ["202-05-06", "rokPlacila should be in the YYYY-MM-DD format."],
-            ["2022-05-6", "rokPlacila should be in the YYYY-MM-DD format."],
-            ["2022-5-06", "rokPlacila should be in the YYYY-MM-DD format."],
-            ["2022-13-08", "The provided rokPlacila is not a valid date."],
-            ["2022-05-32", "The provided rokPlacila is not a valid date."],
+            ["202-05-06", "Payment due date should be in the YYYY-MM-DD format."],
+            ["2022-05-6", "Payment due date should be in the YYYY-MM-DD format."],
+            ["2022-5-06", "Payment due date should be in the YYYY-MM-DD format."],
+            ["2022-13-08", "The provided payment due date is not a valid date."],
+            ["2022-05-32", "The provided payment due date is not a valid date."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -517,24 +576,6 @@ class UPNQRTest extends TestCase
             } catch (Exception $e) {
                 $this->assertEquals($case[1], $e->getMessage());
             }
-        }
-    }
-
-    /**
-     * @return void
-     * @throws Exception
-     */
-    public function testPaymentDueDate()
-    {
-        $correctCases = [
-            ["1970-01-01", "1970-01-01"],
-            ["2022-06-01", "2022-06-01"],
-            ["2500-12-12", "2500-12-12"],
-        ];
-
-        foreach ($correctCases as $case) {
-            $this->QRR->setPaymentDueDate($case[0]);
-            $this->assertEquals($case[1], $this->QRR->getPaymentDueDate(false));
         }
     }
 
@@ -558,9 +599,9 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            ["SI5602017001435620", "ibanPrejemnika must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard)."],
-            ["5602017001435620", "ibanPrejemnika must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard)."],
-            ["545602017001435620545", "ibanPrejemnika must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard)."],
+            ["SI5602017001435620", "Recipient IBAN must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard)."],
+            ["5602017001435620", "Recipient IBAN must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard)."],
+            ["545602017001435620545", "Recipient IBAN must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard)."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -594,12 +635,12 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            ["SI9", "referencaPrejemnika must start with SI or RF and then 2 digits and other digits or characters."],
-            ["RF9", "referencaPrejemnika must start with SI or RF and then 2 digits and other digits or characters."],
-            ["SO99", "referencaPrejemnika must start with SI or RF and then 2 digits and other digits or characters."],
-            ["TF99", "referencaPrejemnika must start with SI or RF and then 2 digits and other digits or characters."],
-            ["SI9912345678912345678912345", "referencaPrejemnika should not have more than 26 characters."],
-            ["SI9965465-4156-15615-615", "referencaPrejemnika that starts with SI should not have more than two dashes."],
+            ["SI9", "Recipient reference must start with SI or RF and then 2 digits and other digits or characters."],
+            ["RF9", "Recipient reference must start with SI or RF and then 2 digits and other digits or characters."],
+            ["SO99", "Recipient reference must start with SI or RF and then 2 digits and other digits or characters."],
+            ["TF99", "Recipient reference must start with SI or RF and then 2 digits and other digits or characters."],
+            ["SI9912345678912345678912345", "Recipient reference should not have more than 26 characters."],
+            ["SI9965465-4156-15615-615", "Recipient references that starts with SI should not have more than two dashes."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -630,7 +671,7 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            [str_repeat("a", 34), "imePrejemnika should not have more than 33 characters."],
+            [str_repeat("a", 34), "Recipient name should not have more than 33 characters."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -649,9 +690,9 @@ class UPNQRTest extends TestCase
     public function testRecipientStreetAddress()
     {
         $correctCases = [
-            ["Koperska ulica 55", "Koperska ulica 55"],
-            ["   Koperska ulica 55", "Koperska ulica 55"],
-            ["Koperska ulica 55    ", "Koperska ulica 55"],
+            ["Koprska ulica 55", "Koprska ulica 55"],
+            ["   Koprska ulica 55", "Koprska ulica 55"],
+            ["Koprska ulica 55    ", "Koprska ulica 55"],
         ];
 
         foreach ($correctCases as $case) {
@@ -660,7 +701,7 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            [str_repeat("a", 34), "ulicaPrejemnika should not have more than 33 characters."],
+            [str_repeat("a", 34), "Recipient street address should not have more than 33 characters."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -690,7 +731,7 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            [str_repeat("a", 34), "krajPrejemnika should not have more than 33 characters."],
+            [str_repeat("a", 34), "Recipient city should not have more than 33 characters."],
         ];
 
         foreach ($wrongCases as $case) {
