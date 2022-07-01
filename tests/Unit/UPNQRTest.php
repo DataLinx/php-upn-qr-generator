@@ -59,28 +59,6 @@ class UPNQRTest extends TestCase
         $this->QRR = new UPNQR();
     }
 
-    public function testValidation()
-    {
-        $this->assertEquals("SI56020170014356205", $this->QR->getPayerIban());
-        $this->assertEquals("X", $this->QR->getDeposit() ? 'X' : '');
-        $this->assertEquals("", $this->QR->getWithdraw() ? 'X' : '');
-        $this->assertEquals("SI00225268-32526-222", $this->QR->getPayerReference());
-        $this->assertEquals("Janez Novak", $this->QR->getPayerName());
-        $this->assertEquals("Lepa ulica 33", $this->QR->getPayerStreetAddress());
-        $this->assertEquals("Koper", $this->QR->getPayerCity());
-        $this->assertEquals("00000005559", $this->QR->getFormattedAmount());
-        $this->assertEquals("16.06.2022", $this->QR->formatDate($this->QR->getPaymentDate()));
-        $this->assertEquals("", $this->QR->getUrgent() ? 'X' : '');
-        $this->assertEquals("COST", $this->QR->getPurposeCode() ? strtoupper($this->QR->getPurposeCode()) : "OTHR");
-        $this->assertEquals("Predracun 111", $this->QR->getPaymentPurpose());
-        $this->assertEquals("30.06.2022", $this->QR->formatDate($this->QR->getPaymentDueDate()));
-        $this->assertEquals("SI56020360253863406", $this->QR->getRecipientIban());
-        $this->assertEquals("SI081236-17-34565", $this->QR->getRecipientReference());
-        $this->assertEquals("Podjetje d.o.o.", $this->QR->getRecipientName());
-        $this->assertEquals("Neka ulica 5", $this->QR->getRecipientStreetAddress());
-        $this->assertEquals("Ljubljana", $this->QR->getRecipientCity());
-    }
-
     /**
      * @throws Exception
      */
