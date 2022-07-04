@@ -30,7 +30,6 @@ class UPNQRTest extends TestCase
         $this->QR->setAmount(55.586);
         $this->QR->setPaymentDate("2022-06-16");
         $this->QR->setUrgent(false);
-        $this->QR->setPurposeCode("COST");
         $this->QR->setPaymentPurpose("Predracun 111");
         $this->QR->setPaymentDueDate("2022-06-30");
         $this->QR->setRecipientIban("SI56020360253863406");
@@ -38,6 +37,9 @@ class UPNQRTest extends TestCase
         $this->QR->setRecipientName("Podjetje d.o.o.");
         $this->QR->setRecipientStreetAddress("Neka ulica 5");
         $this->QR->setRecipientCity("Ljubljana");
+
+        // We must set a value for "purposeCode" and it must not be OTHR, because there appears to be a bug in the OCR library and the test fails. However, the QR generator works fine with any value.
+        $this->QR->setPurposeCode("GDSV");
     }
 
     /**
@@ -122,6 +124,8 @@ class UPNQRTest extends TestCase
 
         // Return decoded text from QR Code
         $text = $qrcode->text();
+
+        $this->assertIsString($text);
 
         $explodedText = explode("\n", $text);
         $this->assertSame($explodedText[0], UPNQR::VODILNI_SLOG);
