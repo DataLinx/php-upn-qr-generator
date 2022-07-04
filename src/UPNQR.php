@@ -371,16 +371,19 @@ class UPNQR
      * Order purpose code (example: COST)
      * (sln. koda namena)
      * @param string|null $purposeCode 4-letter payment code in uppercase
-     * @return void
+     * @return $this
      * @throws Exception
      */
-    public function setPurposeCode(string $purposeCode = null): void
+    public function setPurposeCode(?string $purposeCode): self
     {
         $purposeCode = trim($purposeCode);
         if ($purposeCode != null and !preg_match('/^[A-Z]{4}$/', $purposeCode)) {
             throw new Exception("Purpose code must be null or have exactly four uppercase characters [A-Z].");
         }
+
         $this->purposeCode = $purposeCode;
+
+        return $this;
     }
 
     /**
