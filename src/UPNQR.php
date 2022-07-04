@@ -20,7 +20,7 @@ class UPNQR
     protected string $payerName;
     protected string $payerStreetAddress;
     protected string $payerCity;
-    protected float $amount;
+    protected ?float $amount;
     protected string $paymentDate;
     protected bool $urgent;
     protected ?string $purposeCode;
@@ -282,11 +282,11 @@ class UPNQR
     }
 
     /**
-     * @return float
+     * @return float|null
      */
-    public function getAmount(): float
+    public function getAmount(): ?float
     {
-        return $this->amount;
+        return $this->amount ?? null;
     }
 
     /**
@@ -301,16 +301,19 @@ class UPNQR
     /**
      * Payment amount
      * (sln. znesek)
-     * @param float $amount
-     * @return void
+     * @param float|null $amount
+     * @return $this
      * @throws Exception
      */
-    public function setAmount(float $amount): void
+    public function setAmount(?float $amount): self
     {
-        if ($amount <= 0 or $amount > 999999999) {
-            throw new Exception("Amount should be more than 0 and less than 1000000000");
+        if ($amount !== null and ($amount <= 0 or $amount > 999999999)) {
+            throw new Exception("Amount must either be null or a value between 0 and 1,000,000,000");
         }
+
         $this->amount = $amount;
+
+        return $this;
     }
 
     /**

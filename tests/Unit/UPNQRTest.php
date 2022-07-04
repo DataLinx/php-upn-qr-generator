@@ -366,9 +366,9 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            [0, "Amount should be more than 0 and less than 1000000000"],
-            [-1, "Amount should be more than 0 and less than 1000000000"],
-            [1000000000, "Amount should be more than 0 and less than 1000000000"],
+            [0, "Amount must either be null or a value between 0 and 1,000,000,000"],
+            [-1, "Amount must either be null or a value between 0 and 1,000,000,000"],
+            [1000000000, "Amount must either be null or a value between 0 and 1,000,000,000"],
         ];
 
         foreach ($wrongCases as $case) {
@@ -724,5 +724,20 @@ class UPNQRTest extends TestCase
                 $this->assertEquals($case[1], $e->getMessage());
             }
         }
+    }
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function testNullableParameters()
+    {
+        $qr = new UPNQR();
+
+        $this->assertNull($qr->getAmount());
+        $this->assertIsObject($qr->setAmount('44.24'));
+        $this->assertIsObject($qr->setAmount(null));
+
+        // TODO Test all other nullable parameters
     }
 }
