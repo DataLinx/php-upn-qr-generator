@@ -11,6 +11,7 @@ use Exception;
 class UPNQR
 {
     public const VODILNI_SLOG = "UPNQR";
+    public const DEFAULT_PURPOSE_CODE = "OTHR";
 
     protected string $payerIban;
     protected bool $deposit;
@@ -22,7 +23,7 @@ class UPNQR
     protected float $amount;
     protected string $paymentDate;
     protected bool $urgent;
-    protected string $purposeCode;
+    protected ?string $purposeCode;
     protected string $paymentPurpose;
     protected string $paymentDueDate;
     protected string $recipientIban;
@@ -38,7 +39,7 @@ class UPNQR
      */
     public function serializeContents(): string
     {
-        // check if all required parameters are set
+        // Check if all required parameters are set
         $this->checkRequiredParameters();
 
         $qrDelim = "\n";
@@ -55,7 +56,7 @@ class UPNQR
                 $this->getFormattedAmount(),
                 $this->formatDate($this->getPaymentDate()),
                 $this->getUrgent() ? 'X' : '',
-                $this->getPurposeCode() ? strtoupper($this->getPurposeCode()) : "OTHR",
+                $this->getPurposeCode() ? strtoupper($this->getPurposeCode()) : self::DEFAULT_PURPOSE_CODE,
                 $this->getPaymentPurpose(),
                 $this->formatDate($this->getPaymentDueDate()),
                 $this->getRecipientIban(),
@@ -65,7 +66,7 @@ class UPNQR
                 $this->getRecipientCity(),
             ]) . $qrDelim;
 
-        // checksum check. Max characters is 411.
+        // Checksum check. Max characters is 411.
         $checksum = mb_strlen($qrContentStr);
 
         $qrContentStr .= sprintf('%03d', $checksum);
@@ -100,9 +101,6 @@ class UPNQR
     public function checkRequiredParameters()
     {
         $params = [
-            'payerReference',
-            'amount',
-            'purposeCode',
             'paymentPurpose',
             'recipientIban',
             'recipientName',
@@ -204,7 +202,7 @@ class UPNQR
             throw new Exception("Payer reference should not have more than 26 characters.");
         }
 
-        // source: http://www.firmar.si/index.jsp?pg=nasveti-clanki/upn/referenca-si-in-rf-za-univerzalni-placilni-nalog-upn
+        // Source: http://www.firmar.si/index.jsp?pg=nasveti-clanki/upn/referenca-si-in-rf-za-univerzalni-placilni-nalog-upn
         if (preg_match('/^SI/', $payerReference) && substr_count($payerReference, '-') > 2) {
             throw new Exception("Payer references that starts with SI should not have more than two dashes.");
         }
@@ -362,25 +360,25 @@ class UPNQR
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPurposeCode(): string
+    public function getPurposeCode(): ?string
     {
-        return $this->purposeCode;
+        return $this->purposeCode ?? null;
     }
 
     /**
      * Order purpose code (example: COST)
      * (sln. koda namena)
-     * @param string $purposeCode 4-letter payment code in uppercase
+     * @param string|null $purposeCode 4-letter payment code in uppercase
      * @return void
      * @throws Exception
      */
-    public function setPurposeCode(string $purposeCode): void
+    public function setPurposeCode(string $purposeCode = null): void
     {
         $purposeCode = trim($purposeCode);
-        if (!preg_match('/^[A-Z]{4}$/', $purposeCode)) {
-            throw new Exception("Purpose code must have exactly four uppercase characters [A-Z].");
+        if ($purposeCode != null and !preg_match('/^[A-Z]{4}$/', $purposeCode)) {
+            throw new Exception("Purpose code must be null or have exactly four uppercase characters [A-Z].");
         }
         $this->purposeCode = $purposeCode;
     }

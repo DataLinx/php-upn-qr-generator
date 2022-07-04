@@ -117,9 +117,10 @@ class UPNQRTest extends TestCase
 
     public function testGeneratedImageContents()
     {
+        $this->QR->generateQrCode('./build/qrcode.svg');
         $qrcode = new QrReader("./build/qrcode.svg");
 
-        //return decoded text from QR Code
+        // Return decoded text from QR Code
         $text = $qrcode->text();
 
         $explodedText = explode("\n", $text);
@@ -134,7 +135,7 @@ class UPNQRTest extends TestCase
         $this->assertSame($explodedText[8], $this->QR->getFormattedAmount());
         $this->assertSame($explodedText[9], $this->QR->formatDate($this->QR->getPaymentDate()));
         $this->assertSame($explodedText[10], $this->QR->getUrgent() ? 'X' : '');
-        $this->assertSame($explodedText[11], $this->QR->getPurposeCode());
+        $this->assertSame($explodedText[11], $this->QR->getPurposeCode() ? strtoupper($this->QR->getPurposeCode()) : UPNQR::DEFAULT_PURPOSE_CODE);
         $this->assertSame($explodedText[12], $this->QR->getPaymentPurpose());
         $this->assertSame($explodedText[13], $this->QR->formatDate($this->QR->getPaymentDueDate()));
         $this->assertSame($explodedText[14], $this->QR->getRecipientIban());
@@ -477,10 +478,10 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            ["", "Purpose code must have exactly four uppercase characters [A-Z]."],
-            [" ", "Purpose code must have exactly four uppercase characters [A-Z]."],
-            ["RTF ", "Purpose code must have exactly four uppercase characters [A-Z]."],
-            ["RTFDE", "Purpose code must have exactly four uppercase characters [A-Z]."],
+            ["", "Purpose code must be null or have exactly four uppercase characters [A-Z]."],
+            [" ", "Purpose code must be null or have exactly four uppercase characters [A-Z]."],
+            ["RTF ", "Purpose code must be null or have exactly four uppercase characters [A-Z]."],
+            ["RTFDE", "Purpose code must be null or have exactly four uppercase characters [A-Z]."],
         ];
 
         foreach ($wrongCases as $case) {
