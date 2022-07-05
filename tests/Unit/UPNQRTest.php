@@ -169,9 +169,9 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            ["SI5602017001435620", "Payer IBAN must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard)."],
-            ["5602017001435620", "Payer IBAN must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard)."],
-            ["5456020170014356205", "Payer IBAN must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard)."],
+            ["SI5602017001435620", "Payer IBAN must either be null or have 19 characters with the country code prefix of two characters (alpha-2 ISO standard)."],
+            ["5602017001435620", "Payer IBAN must either be null or have 19 characters with the country code prefix of two characters (alpha-2 ISO standard)."],
+            ["5456020170014356205", "Payer IBAN must either be null or have 19 characters with the country code prefix of two characters (alpha-2 ISO standard)."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -235,12 +235,12 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            ["SI", "Payer reference must start with SI or RF and then 2 digits and other digits or characters."],
-            ["RF", "Payer reference must start with SI or RF and then 2 digits and other digits or characters."],
-            ["SI9", "Payer reference must start with SI or RF and then 2 digits and other digits or characters."],
-            ["RF9", "Payer reference must start with SI or RF and then 2 digits and other digits or characters."],
-            ["SO99", "Payer reference must start with SI or RF and then 2 digits and other digits or characters."],
-            ["TF99", "Payer reference must start with SI or RF and then 2 digits and other digits or characters."],
+            ["SI", "Payer reference must either be null or start with SI or RF and then 2 digits and other digits or characters."],
+            ["RF", "Payer reference must either be null or start with SI or RF and then 2 digits and other digits or characters."],
+            ["SI9", "Payer reference must either be null or start with SI or RF and then 2 digits and other digits or characters."],
+            ["RF9", "Payer reference must either be null or start with SI or RF and then 2 digits and other digits or characters."],
+            ["SO99", "Payer reference must either be null or start with SI or RF and then 2 digits and other digits or characters."],
+            ["TF99", "Payer reference must either be null or start with SI or RF and then 2 digits and other digits or characters."],
             ["SI9912345678912345678912345", "Payer reference should not have more than 26 characters."],
             ["SI9965465-4156-15615-615", "Payer references that starts with SI should not have more than two dashes."],
         ];
@@ -273,7 +273,7 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            [str_repeat('a', 34), "Payer name should not have more than 33 characters."],
+            [str_repeat('a', 34), "Payer name must either be null or not have more than 33 characters."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -303,7 +303,7 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            [str_repeat('a', 34), "Payer street address should not have more than 33 characters."],
+            [str_repeat('a', 34), "Payer street address must either be null or not have more than 33 characters."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -333,7 +333,7 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            [str_repeat('a', 34), "Payer city should not have more than 33 characters."],
+            [str_repeat('a', 34), "Payer city must either be null or not have more than 33 characters."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -414,9 +414,9 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            ["202-05-06", "Payment date should be in the YYYY-MM-DD format."],
-            ["2022-05-6", "Payment date should be in the YYYY-MM-DD format."],
-            ["2022-5-06", "Payment date should be in the YYYY-MM-DD format."],
+            ["202-05-06", "Payment date must either be null or be in the YYYY-MM-DD format."],
+            ["2022-05-6", "Payment date must either be null or be in the YYYY-MM-DD format."],
+            ["2022-5-06", "Payment date must either be null or be in the YYYY-MM-DD format."],
             ["2022-13-08", "The provided payment date is not a valid date."],
             ["2022-05-32", "The provided payment date is not a valid date."],
             ["1969-12-31", "The provided payment date is not a valid date."],
@@ -546,9 +546,9 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            ["202-05-06", "Payment due date should be in the YYYY-MM-DD format."],
-            ["2022-05-6", "Payment due date should be in the YYYY-MM-DD format."],
-            ["2022-5-06", "Payment due date should be in the YYYY-MM-DD format."],
+            ["202-05-06", "Payment due date must either be null or be in the YYYY-MM-DD format."],
+            ["2022-05-6", "Payment due date must either be null or be in the YYYY-MM-DD format."],
+            ["2022-5-06", "Payment due date must either be null or be in the YYYY-MM-DD format."],
             ["2022-13-08", "The provided payment due date is not a valid date."],
             ["2022-05-32", "The provided payment due date is not a valid date."],
         ];
@@ -618,10 +618,10 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            ["SI9", "Recipient reference must start with SI or RF and then 2 digits and other digits or characters."],
-            ["RF9", "Recipient reference must start with SI or RF and then 2 digits and other digits or characters."],
-            ["SO99", "Recipient reference must start with SI or RF and then 2 digits and other digits or characters."],
-            ["TF99", "Recipient reference must start with SI or RF and then 2 digits and other digits or characters."],
+            ["SI9", "Recipient reference must either be null or start with SI or RF and then 2 digits and other digits or characters."],
+            ["RF9", "Recipient reference must either be null or start with SI or RF and then 2 digits and other digits or characters."],
+            ["SO99", "Recipient reference must either be null or start with SI or RF and then 2 digits and other digits or characters."],
+            ["TF99", "Recipient reference must either be null or start with SI or RF and then 2 digits and other digits or characters."],
             ["SI9912345678912345678912345", "Recipient reference should not have more than 26 characters."],
             ["SI9965465-4156-15615-615", "Recipient references that starts with SI should not have more than two dashes."],
         ];
@@ -734,10 +734,56 @@ class UPNQRTest extends TestCase
     {
         $qr = new UPNQR();
 
+        $this->assertNull($qr->getPayerIban());
+        $this->assertIsObject($qr->setPayerIban('SI56020170014356205'));
+        $this->assertIsObject($qr->setPayerIban(null));
+
+        $this->assertNull($qr->getDeposit());
+        $this->assertIsObject($qr->setDeposit(true));
+        $this->assertIsObject($qr->setDeposit(null));
+
+        $this->assertNull($qr->getWithdraw());
+        $this->assertIsObject($qr->setWithdraw(true));
+        $this->assertIsObject($qr->setWithdraw(null));
+
+        $this->assertNull($qr->getPayerReference());
+        $this->assertIsObject($qr->setPayerReference('SI00225268-32526-222'));
+        $this->assertIsObject($qr->setPayerReference(null));
+
+        $this->assertNull($qr->getPayerName());
+        $this->assertIsObject($qr->setPayerName('Janez Novak'));
+        $this->assertIsObject($qr->setPayerName(null));
+
+        $this->assertNull($qr->getPayerStreetAddress());
+        $this->assertIsObject($qr->setPayerStreetAddress('Lepa ulica 33'));
+        $this->assertIsObject($qr->setPayerStreetAddress(null));
+
+        $this->assertNull($qr->getPayerCity());
+        $this->assertIsObject($qr->setPayerCity('Koper'));
+        $this->assertIsObject($qr->setPayerCity(null));
+
         $this->assertNull($qr->getAmount());
         $this->assertIsObject($qr->setAmount('44.24'));
         $this->assertIsObject($qr->setAmount(null));
 
-        // TODO Test all other nullable parameters
+        $this->assertNull($qr->getPaymentDate());
+        $this->assertIsObject($qr->setPaymentDate('2022-06-16'));
+        $this->assertIsObject($qr->setPaymentDate(null));
+
+        $this->assertNull($qr->getUrgent());
+        $this->assertIsObject($qr->setUrgent(true));
+        $this->assertIsObject($qr->setUrgent(null));
+
+        $this->assertNull($qr->getPurposeCode());
+        $this->assertIsObject($qr->setPurposeCode('COST'));
+        $this->assertIsObject($qr->setPurposeCode(null));
+
+        $this->assertNull($qr->getPaymentDueDate());
+        $this->assertIsObject($qr->setPaymentDueDate('2022-06-16'));
+        $this->assertIsObject($qr->setPaymentDueDate(null));
+
+        $this->assertNull($qr->getRecipientReference());
+        $this->assertIsObject($qr->setRecipientReference('SI081236-17-34565'));
+        $this->assertIsObject($qr->setRecipientReference(null));
     }
 }

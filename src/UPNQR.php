@@ -13,21 +13,21 @@ class UPNQR
     public const VODILNI_SLOG = "UPNQR";
     public const DEFAULT_PURPOSE_CODE = "OTHR";
 
-    protected string $payerIban;
-    protected bool $deposit;
-    protected bool $withdraw;
-    protected string $payerReference;
-    protected string $payerName;
-    protected string $payerStreetAddress;
-    protected string $payerCity;
+    protected ?string $payerIban;
+    protected ?bool $deposit;
+    protected ?bool $withdraw;
+    protected ?string $payerReference;
+    protected ?string $payerName;
+    protected ?string $payerStreetAddress;
+    protected ?string $payerCity;
     protected ?float $amount;
-    protected string $paymentDate;
-    protected bool $urgent;
+    protected ?string $paymentDate;
+    protected ?bool $urgent;
     protected ?string $purposeCode;
     protected string $paymentPurpose;
-    protected string $paymentDueDate;
+    protected ?string $paymentDueDate;
     protected string $recipientIban;
-    protected string $recipientReference;
+    protected ?string $recipientReference;
     protected string $recipientName;
     protected string $recipientStreetAddress;
     protected string $recipientCity;
@@ -116,87 +116,94 @@ class UPNQR
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPayerIban(): string
+    public function getPayerIban(): ?string
     {
-        return $this->payerIban;
+        return $this->payerIban ?? null;
     }
 
     /**
      * Payer IBAN account number written with 19 characters (example: SI56020170014356205)
      * (sln. IBAN plačnika)
-     * @param string $payerIban
-     * @return void
+     * @param string|null $payerIban
+     * @return $this
      * @throws Exception
      */
-    public function setPayerIban(string $payerIban): void
+    public function setPayerIban(?string $payerIban): self
     {
         $payerIban = trim(str_replace(' ', '', $payerIban));
-        if (!preg_match('/^[a-z]{2}\d{17}$/i', $payerIban)) {
-            throw new Exception("Payer IBAN must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard).");
+        if ($payerIban != null and !preg_match('/^[a-z]{2}\d{17}$/i', $payerIban)) {
+            throw new Exception("Payer IBAN must either be null or have 19 characters with the country code prefix of two characters (alpha-2 ISO standard).");
         }
+
         $this->payerIban = $payerIban;
+
+        return $this;
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
-    public function getDeposit(): bool
+    public function getDeposit(): ?bool
     {
-        return $this->deposit;
+        return $this->deposit ?? null;
     }
 
     /**
      * Set order deposit state
      * (sln. polog)
-     * @param bool $deposit
-     * @return void
+     * @param bool|null $deposit
+     * @return $this
      */
-    public function setDeposit(bool $deposit): void
+    public function setDeposit(?bool $deposit): self
     {
         $this->deposit = $deposit;
+
+        return $this;
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
-    public function getWithdraw(): bool
+    public function getWithdraw(): ?bool
     {
-        return $this->withdraw;
+        return $this->withdraw  ?? null;
     }
 
     /**
      * Set order withdrawal state
      * (sln. dvig)
-     * @param bool $withdraw
-     * @return void
+     * @param bool|null $withdraw
+     * @return $this
      */
-    public function setWithdraw(bool $withdraw): void
+    public function setWithdraw(?bool $withdraw): self
     {
         $this->withdraw = $withdraw;
+
+        return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPayerReference(): string
+    public function getPayerReference(): ?string
     {
-        return $this->payerReference;
+        return $this->payerReference ?? null;
     }
 
     /**
      * Payer reference number (example: SI00225268-32526-222)
      * (sln. referenca plačnika)
-     * @param string $payerReference
-     * @return void
+     * @param string|null $payerReference
+     * @return $this
      * @throws Exception
      */
-    public function setPayerReference(string $payerReference): void
+    public function setPayerReference(?string $payerReference): self
     {
         $payerReference = trim($payerReference);
-        if (!preg_match('/^(SI|RF)\d{2}/', $payerReference)) {
-            throw new Exception("Payer reference must start with SI or RF and then 2 digits and other digits or characters.");
+        if ($payerReference != null and !preg_match('/^(SI|RF)\d{2}/', $payerReference)) {
+            throw new Exception("Payer reference must either be null or start with SI or RF and then 2 digits and other digits or characters.");
         }
         if (mb_strlen($payerReference) > 26) {
             throw new Exception("Payer reference should not have more than 26 characters.");
@@ -206,79 +213,91 @@ class UPNQR
         if (preg_match('/^SI/', $payerReference) && substr_count($payerReference, '-') > 2) {
             throw new Exception("Payer references that starts with SI should not have more than two dashes.");
         }
+
         $this->payerReference = $payerReference;
+
+        return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPayerName(): string
+    public function getPayerName(): ?string
     {
-        return $this->payerName;
+        return $this->payerName ?? null;
     }
 
     /**
      * Payer name/title
      * (sln. ime plačnika)
-     * @param string $payerName
-     * @return void
+     * @param string|null $payerName
+     * @return $this
      * @throws Exception
      */
-    public function setPayerName(string $payerName): void
+    public function setPayerName(?string $payerName): self
     {
         $payerName = trim($payerName);
-        if (mb_strlen($payerName) > 33) {
-            throw new Exception("Payer name should not have more than 33 characters.");
+        if ($payerName !== null and mb_strlen($payerName) > 33) {
+            throw new Exception("Payer name must either be null or not have more than 33 characters.");
         }
+
         $this->payerName = $payerName;
+
+        return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPayerStreetAddress(): string
+    public function getPayerStreetAddress(): ?string
     {
-        return $this->payerStreetAddress;
+        return $this->payerStreetAddress ?? null;
     }
 
     /**
      * Payer street name and number
      * (sln. ulica in št. plačnika)
-     * @param string $payerStreetAddress
-     * @return void
+     * @param string|null $payerStreetAddress
+     * @return $this
      * @throws Exception
      */
-    public function setPayerStreetAddress(string $payerStreetAddress): void
+    public function setPayerStreetAddress(?string $payerStreetAddress): self
     {
         $payerStreetAddress = trim($payerStreetAddress);
-        if (mb_strlen($payerStreetAddress) > 33) {
-            throw new Exception("Payer street address should not have more than 33 characters.");
+        if ($payerStreetAddress !== null and mb_strlen($payerStreetAddress) > 33) {
+            throw new Exception("Payer street address must either be null or not have more than 33 characters.");
         }
+
         $this->payerStreetAddress = $payerStreetAddress;
+
+        return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPayerCity(): string
+    public function getPayerCity(): ?string
     {
-        return $this->payerCity;
+        return $this->payerCity ?? null;
     }
 
     /**
      * Payer city/location name
      * (sln. kraj plačnika)
-     * @param string $payerCity
-     * @return void
+     * @param string|null $payerCity
+     * @return $this
      * @throws Exception
      */
-    public function setPayerCity(string $payerCity): void
+    public function setPayerCity(?string $payerCity): self
     {
         $payerCity = trim($payerCity);
-        if (mb_strlen($payerCity) > 33) {
-            throw new Exception("Payer city should not have more than 33 characters.");
+        if ($payerCity !== null and mb_strlen($payerCity) > 33) {
+            throw new Exception("Payer city must either be null or not have more than 33 characters.");
         }
+
         $this->payerCity = $payerCity;
+
+        return $this;
     }
 
     /**
@@ -317,49 +336,54 @@ class UPNQR
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPaymentDate(): string
+    public function getPaymentDate(): ?string
     {
-        return $this->paymentDate;
+        return $this->paymentDate ?? null;
     }
 
     /**
      * Payment date (example. 2022-06-16)
      * (sln. datum plačila)
-     * @param string $paymentDate
-     * @return void
+     * @param string|null $paymentDate
+     * @return $this
      * @throws Exception
      */
-    public function setPaymentDate(string $paymentDate): void
+    public function setPaymentDate(?string $paymentDate): self
     {
         $paymentDate = trim($paymentDate);
-        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $paymentDate)) {
-            throw new Exception("Payment date should be in the YYYY-MM-DD format.");
+        if ($paymentDate != null and !preg_match('/^\d{4}-\d{2}-\d{2}$/', $paymentDate)) {
+            throw new Exception("Payment date must either be null or be in the YYYY-MM-DD format.");
         }
-        if (!strtotime($paymentDate)) {
+        if ($paymentDate != null and !strtotime($paymentDate)) {
             throw new Exception("The provided payment date is not a valid date.");
         }
+
         $this->paymentDate = $paymentDate;
+
+        return $this;
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
-    public function getUrgent(): bool
+    public function getUrgent(): ?bool
     {
-        return $this->urgent;
+        return $this->urgent ?? null;
     }
 
     /**
      * Set if order is urgent
      * (sln. nujno)
-     * @param bool $urgent
-     * @return void
+     * @param bool|null $urgent
+     * @return $this
      */
-    public function setUrgent(bool $urgent): void
+    public function setUrgent(?bool $urgent): self
     {
         $this->urgent = $urgent;
+
+        return $this;
     }
 
     /**
@@ -414,30 +438,33 @@ class UPNQR
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPaymentDueDate(): string
+    public function getPaymentDueDate(): ?string
     {
-        return $this->paymentDueDate;
+        return $this->paymentDueDate ?? null;
     }
 
     /**
      * Payment due date (example: 2022-09-05)
      * (sln. rok plačila)
-     * @param string $paymentDueDate
-     * @return void
+     * @param string|null $paymentDueDate
+     * @return $this
      * @throws Exception
      */
-    public function setPaymentDueDate(string $paymentDueDate): void
+    public function setPaymentDueDate(?string $paymentDueDate): self
     {
         $paymentDueDate = trim($paymentDueDate);
-        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $paymentDueDate)) {
-            throw new Exception("Payment due date should be in the YYYY-MM-DD format.");
+        if ($paymentDueDate != null and !preg_match('/^\d{4}-\d{2}-\d{2}$/', $paymentDueDate)) {
+            throw new Exception("Payment due date must either be null or be in the YYYY-MM-DD format.");
         }
-        if (!strtotime($paymentDueDate)) {
+        if ($paymentDueDate != null and !strtotime($paymentDueDate)) {
             throw new Exception("The provided payment due date is not a valid date.");
         }
+
         $this->paymentDueDate = $paymentDueDate;
+
+        return $this;
     }
 
     /**
@@ -465,25 +492,25 @@ class UPNQR
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getRecipientReference(): string
+    public function getRecipientReference(): ?string
     {
-        return $this->recipientReference;
+        return $this->recipientReference ?? null;
     }
 
     /**
      * Recipient/payee reference number (example: SI00225268-32526-222)
      * (sln. referenca prejemnika)
-     * @param string $recipientReference
-     * @return void
+     * @param string|null $recipientReference
+     * @return $this
      * @throws Exception
      */
-    public function setRecipientReference(string $recipientReference): void
+    public function setRecipientReference(?string $recipientReference): self
     {
         $recipientReference = trim($recipientReference);
-        if (!preg_match('/^(SI|RF)\d{2}/', $recipientReference)) {
-            throw new Exception("Recipient reference must start with SI or RF and then 2 digits and other digits or characters.");
+        if ($recipientReference != null and !preg_match('/^(SI|RF)\d{2}/', $recipientReference)) {
+            throw new Exception("Recipient reference must either be null or start with SI or RF and then 2 digits and other digits or characters.");
         }
         if (mb_strlen($recipientReference) > 26) {
             throw new Exception("Recipient reference should not have more than 26 characters.");
@@ -491,7 +518,10 @@ class UPNQR
         if (preg_match('/^SI/', $recipientReference) && substr_count($recipientReference, '-') > 2) {
             throw new Exception("Recipient references that starts with SI should not have more than two dashes.");
         }
+
         $this->recipientReference = $recipientReference;
+
+        return $this;
     }
 
     /**
