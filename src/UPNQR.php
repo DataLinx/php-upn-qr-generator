@@ -2,7 +2,9 @@
 
 namespace DataLinx\PhpUpnQrGenerator;
 
+use BaconQrCode\Renderer\Image\EpsImageBackEnd;
 use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
@@ -24,12 +26,12 @@ class UPNQR
     protected ?string $paymentDate;
     protected ?bool $urgent;
     protected ?string $purposeCode;
-    protected string $paymentPurpose;
+    protected ?string $paymentPurpose;
     protected ?string $paymentDueDate;
     protected string $recipientIban;
     protected ?string $recipientReference;
-    protected string $recipientName;
-    protected string $recipientStreetAddress;
+    protected ?string $recipientName;
+    protected ?string $recipientStreetAddress;
     protected string $recipientCity;
 
     /**
@@ -53,12 +55,12 @@ class UPNQR
                 $this->getPayerName(),
                 $this->getPayerStreetAddress(),
                 $this->getPayerCity(),
-                $this->getFormattedAmount(),
-                $this->formatDate($this->getPaymentDate()),
+                isset($this->amount) ? $this->getFormattedAmount() : "",
+                isset($this->paymentDate) ? $this->formatDate($this->getPaymentDate()) : "",
                 $this->getUrgent() ? 'X' : '',
                 $this->getPurposeCode() ? strtoupper($this->getPurposeCode()) : self::DEFAULT_PURPOSE_CODE,
                 $this->getPaymentPurpose(),
-                $this->formatDate($this->getPaymentDueDate()),
+                isset($this->paymentDueDate) ? $this->formatDate($this->getPaymentDueDate()) : "",
                 $this->getRecipientIban(),
                 $this->getRecipientReference() ?: "SI99",
                 $this->getRecipientName(),
@@ -75,18 +77,35 @@ class UPNQR
     }
 
     /**
-     * Generate QR code based on object data. You can define the filetype by providing the file extension (.png and .svg are suppoerted)
+     * Generate QR code based on object data. You can define the filetype by providing the file extension.
+     * Different file types are supported: .png, .svg, .eps (see docs: https://github.com/Bacon/BaconQrCode)
      * @param string $filename target file name
+     * @param int $size optional size parameter (default: 400)
      * @return void
      * @throws Exception
      */
-    public function generateQrCode(string $filename)
+    public function generateQrCode(string $filename, int $size = 400)
     {
         try {
+            switch (pathinfo($filename, PATHINFO_EXTENSION)) {
+                case 'svg':
+                    $imageBackEnd = new SvgImageBackEnd();
+                    break;
+                case 'png':
+                    $imageBackEnd = new ImagickImageBackEnd();
+                    break;
+                case 'eps':
+                    $imageBackEnd = new EpsImageBackEnd();
+                    break;
+                default:
+                    throw new Exception("Please provide a valid path with a supported extension (.png, .svg or .eps).");
+            }
+
             $renderer = new ImageRenderer(
-                new RendererStyle(400),
-                new ImagickImageBackEnd()
+                new RendererStyle($size),
+                $imageBackEnd
             );
+
             $writer = new Writer($renderer);
             $writer->writeFile($this->serializeContents(), $filename, "ISO-8859-2");
         } catch (Exception $exception) {
@@ -101,10 +120,7 @@ class UPNQR
     public function checkRequiredParameters()
     {
         $params = [
-            'paymentPurpose',
             'recipientIban',
-            'recipientName',
-            'recipientStreetAddress',
             'recipientCity',
         ];
 
@@ -414,27 +430,30 @@ class UPNQR
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPaymentPurpose(): string
+    public function getPaymentPurpose(): ?string
     {
-        return $this->paymentPurpose;
+        return $this->paymentPurpose ?? null;
     }
 
     /**
      * Payment purpose text
      * (sln. namen plačila)
-     * @param string $paymentPurpose
-     * @return void
+     * @param string|null $paymentPurpose
+     * @return $this
      * @throws Exception
      */
-    public function setPaymentPurpose(string $paymentPurpose): void
+    public function setPaymentPurpose(?string $paymentPurpose): self
     {
         $paymentPurpose = trim($paymentPurpose);
-        if (mb_strlen($paymentPurpose) > 42) {
-            throw new Exception("Payment purpose should not have more than 42 characters.");
+        if ($paymentPurpose !== null and mb_strlen($paymentPurpose) > 42) {
+            throw new Exception("Payment purpose must either be null or not have more than 42 characters.");
         }
+
         $this->paymentPurpose = $paymentPurpose;
+
+        return $this;
     }
 
     /**
@@ -488,6 +507,7 @@ class UPNQR
         if (!preg_match('/^[a-z]{2}\d{17}$/i', $recipientIban)) {
             throw new Exception("Recipient IBAN must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard).");
         }
+
         $this->recipientIban = $recipientIban;
     }
 
@@ -525,51 +545,57 @@ class UPNQR
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getRecipientName(): string
+    public function getRecipientName(): ?string
     {
-        return $this->recipientName;
+        return $this->recipientName ?? null;
     }
 
     /**
      * Recipient/payee name/title
      * (sln. ime prejemnika)
-     * @param string $recipientName
-     * @return void
+     * @param string|null $recipientName
+     * @return $this
      * @throws Exception
      */
-    public function setRecipientName(string $recipientName): void
+    public function setRecipientName(?string $recipientName): self
     {
         $recipientName = trim($recipientName);
-        if (mb_strlen($recipientName) > 33) {
-            throw new Exception("Recipient name should not have more than 33 characters.");
+        if ($recipientName !== null and mb_strlen($recipientName) > 33) {
+            throw new Exception("Recipient name must either be null or not have more than 33 characters.");
         }
+
         $this->recipientName = $recipientName;
+
+        return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getRecipientStreetAddress(): string
+    public function getRecipientStreetAddress(): ?string
     {
-        return $this->recipientStreetAddress;
+        return $this->recipientStreetAddress ?? null;
     }
 
     /**
      * Recipient/payee street name and number
      * (sln. ulica in št. prejemnika)
-     * @param string $recipientStreetAddress
-     * @return void
+     * @param string|null $recipientStreetAddress
+     * @return $this
      * @throws Exception
      */
-    public function setRecipientStreetAddress(string $recipientStreetAddress): void
+    public function setRecipientStreetAddress(?string $recipientStreetAddress): self
     {
         $recipientStreetAddress = trim($recipientStreetAddress);
-        if (mb_strlen($recipientStreetAddress) > 33) {
-            throw new Exception("Recipient street address should not have more than 33 characters.");
+        if ($recipientStreetAddress !== null and mb_strlen($recipientStreetAddress) > 33) {
+            throw new Exception("Recipient street address must either be null or not have more than 33 characters.");
         }
+
         $this->recipientStreetAddress = $recipientStreetAddress;
+
+        return $this;
     }
 
     /**
@@ -593,6 +619,7 @@ class UPNQR
         if (mb_strlen($recipientCity) > 33) {
             throw new Exception("Recipient city should not have more than 33 characters.");
         }
+
         $this->recipientCity = $recipientCity;
     }
 

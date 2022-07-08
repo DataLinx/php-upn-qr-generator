@@ -117,10 +117,14 @@ class UPNQRTest extends TestCase
         $this->assertFileExists("./build/qrcode.svg");
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testGeneratedImageContents()
     {
-        $this->QR->generateQrCode('./build/qrcode.svg');
-        $qrcode = new QrReader("./build/qrcode.svg");
+        $this->QR->generateQrCode('./build/qrcode.png');
+        $qrcode = new QrReader("./build/qrcode.png");
 
         // Return decoded text from QR Code
         $text = $qrcode->text();
@@ -516,7 +520,7 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            [str_repeat("a", 43), "Payment purpose should not have more than 42 characters."],
+            [str_repeat("a", 43), "Payment purpose must either be null or not have more than 42 characters."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -654,7 +658,7 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            [str_repeat("a", 34), "Recipient name should not have more than 33 characters."],
+            [str_repeat("a", 34), "Recipient name must either be null or not have more than 33 characters."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -684,7 +688,7 @@ class UPNQRTest extends TestCase
         }
 
         $wrongCases = [
-            [str_repeat("a", 34), "Recipient street address should not have more than 33 characters."],
+            [str_repeat("a", 34), "Recipient street address must either be null or not have more than 33 characters."],
         ];
 
         foreach ($wrongCases as $case) {
@@ -785,5 +789,88 @@ class UPNQRTest extends TestCase
         $this->assertNull($qr->getRecipientReference());
         $this->assertIsObject($qr->setRecipientReference('SI081236-17-34565'));
         $this->assertIsObject($qr->setRecipientReference(null));
+    }
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function testMinimal()
+    {
+        if (file_exists("./build/minimalQr.svg")) {
+            unlink("./build/minimalQr.svg");
+        }
+
+        $qr = new UPNQR();
+
+        $qr->setRecipientIban("SI56020360253863406");
+        $qr->setRecipientCity("Ljubljana");
+
+        $qr->generateQrCode("./build/minimalQr.svg");
+
+        $this->assertFileExists("./build/minimalQr.svg");
+    }
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function testFileOutputs()
+    {
+        $svgFilename = "./build/qrOutputType.svg";
+        $pngFilename = "./build/qrOutputType.png";
+        $epsFilename = "./build/qrOutputType.eps";
+
+        if (file_exists($svgFilename)) {
+            unlink($svgFilename);
+        }
+
+        if (file_exists($pngFilename)) {
+            unlink($pngFilename);
+        }
+
+        if (file_exists($epsFilename)) {
+            unlink($epsFilename);
+        }
+
+        $qr = new UPNQR();
+
+        $qr->setPayerIban("SI56020170014356205");
+        $qr->setPayerReference("SI00225268-32526-222");
+        $qr->setPayerName("Janez Novak");
+        $qr->setPayerCity("Koper");
+        $qr->setAmount(55.586);
+        $qr->setPaymentDate("2022-06-16");
+        $qr->setPurposeCode("COST");
+        $qr->setPaymentPurpose("Predračun 111");
+        $qr->setRecipientIban("SI56020360253863406");
+        $qr->setRecipientReference("SI081236-17-34565");
+        $qr->setRecipientCity("Ljubljana");
+
+        $qr->generateQrCode($svgFilename);
+        $this->assertFileExists($svgFilename);
+
+        $qr->generateQrCode($pngFilename);
+        $this->assertFileExists($pngFilename);
+
+        $qr->generateQrCode($epsFilename);
+        $this->assertFileExists($epsFilename);
+    }
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function testInvalidFileExtension()
+    {
+        $qr = new UPNQR();
+
+        $qr->setRecipientIban("SI56020360253863406");
+        $qr->setRecipientCity("Ljubljana");
+
+        $this->expectExceptionMessage("Beacon QR code threw an exception: Please provide a valid path with a supported extension (.png, .svg or .eps).");
+
+        // we set an invalid file extension (.sv instead of .svg)
+        $qr->generateQrCode("./build/invalidQr.sv");
     }
 }

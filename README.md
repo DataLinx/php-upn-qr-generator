@@ -9,7 +9,7 @@
 ## About
 Using this library you can generate a QR code for a UPN payment order, which is used in Slovenia. The technical specification is defined by the Slovenian Bank Association.
 
-This library can output a PNG or SVG image to a local file.
+This library can output a PNG, SVG or EPS image to a local file.
 
 See the changelog [here](CHANGELOG.md).
 
@@ -25,14 +25,10 @@ composer require datalinx/php-upn-qr-generator
 
 ## Usage
 In order to generate a QR code you need to pass at least these parameters:
-* payerReference
-* amount
-* purposeCode
-* paymentPurpose
 * recipientIban
-* recipientName
-* recipientStreetAddress
 * recipientCity
+
+The minimal required parameters are based on the Android applications ISPS and Banka IN offered by the Intesa Sanpaolo Bank Slovenia. 
 
 See class docblocks for accepted parameter formats and length.
 
