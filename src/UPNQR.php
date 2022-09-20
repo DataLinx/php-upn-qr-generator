@@ -9,10 +9,12 @@ use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use Exception;
+use InvalidArgumentException;
+use RuntimeException;
 
 class UPNQR
 {
-    public const VODILNI_SLOG = "UPNQR";
+    public const LEADING_STRING = "UPNQR";
     public const DEFAULT_PURPOSE_CODE = "OTHR";
 
     protected ?string $payerIban;
@@ -47,7 +49,7 @@ class UPNQR
         $qrDelim = "\n";
 
         $qrContentStr = implode($qrDelim, [
-                self::VODILNI_SLOG,
+                self::LEADING_STRING,
                 $this->getPayerIban(),
                 $this->getDeposit() ? 'X' : '',
                 $this->getWithdraw() ? 'X' : '',
@@ -84,7 +86,7 @@ class UPNQR
      * @return void
      * @throws Exception
      */
-    public function generateQrCode(string $filename, int $size = 400)
+    public function generateQrCode(string $filename, int $size = 400): void
     {
         try {
             switch (pathinfo($filename, PATHINFO_EXTENSION)) {
@@ -98,7 +100,7 @@ class UPNQR
                     $imageBackEnd = new EpsImageBackEnd();
                     break;
                 default:
-                    throw new Exception("Please provide a valid path with a supported extension (.png, .svg or .eps).");
+                    throw new InvalidArgumentException("Please provide a valid path with a supported extension (.png, .svg or .eps).");
             }
 
             $renderer = new ImageRenderer(
@@ -109,15 +111,16 @@ class UPNQR
             $writer = new Writer($renderer);
             $writer->writeFile($this->serializeContents(), $filename, "ISO-8859-2");
         } catch (Exception $exception) {
-            throw new Exception("Beacon QR code threw an exception: " . $exception->getMessage());
+            throw new RuntimeException("Beacon QR code threw an exception: " . $exception->getMessage());
         }
     }
 
     /**
      * Check if all the required parameters are set
+     * @return void
      * @throws Exception
      */
-    public function checkRequiredParameters()
+    public function checkRequiredParameters(): void
     {
         $params = [
             'recipientIban',
@@ -126,7 +129,7 @@ class UPNQR
 
         foreach ($params as $param) {
             if (!isset($this->{$param})) {
-                throw new Exception("$param is required.");
+                throw new InvalidArgumentException("$param is required.");
             }
         }
     }
@@ -149,8 +152,8 @@ class UPNQR
     public function setPayerIban(?string $payerIban): self
     {
         $payerIban = trim(str_replace(' ', '', $payerIban));
-        if ($payerIban != null and !preg_match('/^[a-z]{2}\d{17}$/i', $payerIban)) {
-            throw new Exception("Payer IBAN must either be null or have 19 characters with the country code prefix of two characters (alpha-2 ISO standard).");
+        if ($payerIban && !preg_match('/^[a-z]{2}\d{17}$/i', $payerIban)) {
+            throw new InvalidArgumentException("Payer IBAN must either be null or have 19 characters with the country code prefix of two characters (alpha-2 ISO standard).");
         }
 
         $this->payerIban = $payerIban;
@@ -218,16 +221,16 @@ class UPNQR
     public function setPayerReference(?string $payerReference): self
     {
         $payerReference = trim($payerReference);
-        if ($payerReference != null and !preg_match('/^(SI|RF)\d{2}/', $payerReference)) {
-            throw new Exception("Payer reference must either be null or start with SI or RF and then 2 digits and other digits or characters.");
+        if ($payerReference && !preg_match('/^(SI|RF)\d{2}/', $payerReference)) {
+            throw new InvalidArgumentException("Payer reference must either be null or start with SI or RF and then 2 digits and other digits or characters.");
         }
         if (mb_strlen($payerReference) > 26) {
-            throw new Exception("Payer reference should not have more than 26 characters.");
+            throw new InvalidArgumentException("Payer reference should not have more than 26 characters.");
         }
 
         // Source: http://www.firmar.si/index.jsp?pg=nasveti-clanki/upn/referenca-si-in-rf-za-univerzalni-placilni-nalog-upn
-        if (preg_match('/^SI/', $payerReference) && substr_count($payerReference, '-') > 2) {
-            throw new Exception("Payer references that starts with SI should not have more than two dashes.");
+        if (0 === strpos($payerReference, "SI") && substr_count($payerReference, '-') > 2) {
+            throw new InvalidArgumentException("Payer references that starts with SI should not have more than two dashes.");
         }
 
         $this->payerReference = $payerReference;
@@ -253,8 +256,8 @@ class UPNQR
     public function setPayerName(?string $payerName): self
     {
         $payerName = trim($payerName);
-        if ($payerName !== null and mb_strlen($payerName) > 33) {
-            throw new Exception("Payer name must either be null or not have more than 33 characters.");
+        if (mb_strlen($payerName) > 33) {
+            throw new InvalidArgumentException("Payer name must either be null or not have more than 33 characters.");
         }
 
         $this->payerName = $payerName;
@@ -280,8 +283,8 @@ class UPNQR
     public function setPayerStreetAddress(?string $payerStreetAddress): self
     {
         $payerStreetAddress = trim($payerStreetAddress);
-        if ($payerStreetAddress !== null and mb_strlen($payerStreetAddress) > 33) {
-            throw new Exception("Payer street address must either be null or not have more than 33 characters.");
+        if (mb_strlen($payerStreetAddress) > 33) {
+            throw new InvalidArgumentException("Payer street address must either be null or not have more than 33 characters.");
         }
 
         $this->payerStreetAddress = $payerStreetAddress;
@@ -307,8 +310,8 @@ class UPNQR
     public function setPayerCity(?string $payerCity): self
     {
         $payerCity = trim($payerCity);
-        if ($payerCity !== null and mb_strlen($payerCity) > 33) {
-            throw new Exception("Payer city must either be null or not have more than 33 characters.");
+        if (mb_strlen($payerCity) > 33) {
+            throw new InvalidArgumentException("Payer city must either be null or not have more than 33 characters.");
         }
 
         $this->payerCity = $payerCity;
@@ -342,8 +345,8 @@ class UPNQR
      */
     public function setAmount(?float $amount): self
     {
-        if ($amount !== null and ($amount <= 0 or $amount > 999999999)) {
-            throw new Exception("Amount must either be null or a value between 0 and 1,000,000,000");
+        if ($amount !== null && ($amount <= 0 || $amount > 999999999)) {
+            throw new InvalidArgumentException("Amount must either be null or a value between 0 and 1,000,000,000");
         }
 
         $this->amount = $amount;
@@ -369,11 +372,11 @@ class UPNQR
     public function setPaymentDate(?string $paymentDate): self
     {
         $paymentDate = trim($paymentDate);
-        if ($paymentDate != null and !preg_match('/^\d{4}-\d{2}-\d{2}$/', $paymentDate)) {
-            throw new Exception("Payment date must either be null or be in the YYYY-MM-DD format.");
+        if ($paymentDate && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $paymentDate)) {
+            throw new InvalidArgumentException("Payment date must either be null or be in the YYYY-MM-DD format.");
         }
-        if ($paymentDate != null and !strtotime($paymentDate)) {
-            throw new Exception("The provided payment date is not a valid date.");
+        if ($paymentDate && !strtotime($paymentDate)) {
+            throw new InvalidArgumentException("The provided payment date is not a valid date.");
         }
 
         $this->paymentDate = $paymentDate;
@@ -420,8 +423,8 @@ class UPNQR
     public function setPurposeCode(?string $purposeCode): self
     {
         $purposeCode = trim($purposeCode);
-        if ($purposeCode != null and !preg_match('/^[A-Z]{4}$/', $purposeCode)) {
-            throw new Exception("Purpose code must be null or have exactly four uppercase characters [A-Z].");
+        if ($purposeCode && !preg_match('/^[A-Z]{4}$/', $purposeCode)) {
+            throw new InvalidArgumentException("Purpose code must be null or have exactly four uppercase characters [A-Z].");
         }
 
         $this->purposeCode = $purposeCode;
@@ -447,8 +450,8 @@ class UPNQR
     public function setPaymentPurpose(?string $paymentPurpose): self
     {
         $paymentPurpose = trim($paymentPurpose);
-        if ($paymentPurpose !== null and mb_strlen($paymentPurpose) > 42) {
-            throw new Exception("Payment purpose must either be null or not have more than 42 characters.");
+        if (mb_strlen($paymentPurpose) > 42) {
+            throw new InvalidArgumentException("Payment purpose must either be null or not have more than 42 characters.");
         }
 
         $this->paymentPurpose = $paymentPurpose;
@@ -474,11 +477,11 @@ class UPNQR
     public function setPaymentDueDate(?string $paymentDueDate): self
     {
         $paymentDueDate = trim($paymentDueDate);
-        if ($paymentDueDate != null and !preg_match('/^\d{4}-\d{2}-\d{2}$/', $paymentDueDate)) {
-            throw new Exception("Payment due date must either be null or be in the YYYY-MM-DD format.");
+        if ($paymentDueDate && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $paymentDueDate)) {
+            throw new InvalidArgumentException("Payment due date must either be null or be in the YYYY-MM-DD format.");
         }
-        if ($paymentDueDate != null and !strtotime($paymentDueDate)) {
-            throw new Exception("The provided payment due date is not a valid date.");
+        if ($paymentDueDate && !strtotime($paymentDueDate)) {
+            throw new InvalidArgumentException("The provided payment due date is not a valid date.");
         }
 
         $this->paymentDueDate = $paymentDueDate;
@@ -498,17 +501,19 @@ class UPNQR
      * Recipient/payee IBAN account number written with 19 characters (example: SI56020170014356205)
      * (sln. IBAN prejemnika)
      * @param string $recipientIban
-     * @return void
+     * @return $this
      * @throws Exception
      */
-    public function setRecipientIban(string $recipientIban): void
+    public function setRecipientIban(string $recipientIban): self
     {
         $recipientIban = trim(str_replace(' ', '', $recipientIban));
         if (!preg_match('/^[a-z]{2}\d{17}$/i', $recipientIban)) {
-            throw new Exception("Recipient IBAN must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard).");
+            throw new InvalidArgumentException("Recipient IBAN must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard).");
         }
 
         $this->recipientIban = $recipientIban;
+
+        return $this;
     }
 
     /**
@@ -529,14 +534,14 @@ class UPNQR
     public function setRecipientReference(?string $recipientReference): self
     {
         $recipientReference = trim($recipientReference);
-        if ($recipientReference != null and !preg_match('/^(SI|RF)\d{2}/', $recipientReference)) {
-            throw new Exception("Recipient reference must either be null or start with SI or RF and then 2 digits and other digits or characters.");
+        if ($recipientReference && !preg_match('/^(SI|RF)\d{2}/', $recipientReference)) {
+            throw new InvalidArgumentException("Recipient reference must either be null or start with SI or RF and then 2 digits and other digits or characters.");
         }
         if (mb_strlen($recipientReference) > 26) {
-            throw new Exception("Recipient reference should not have more than 26 characters.");
+            throw new InvalidArgumentException("Recipient reference should not have more than 26 characters.");
         }
-        if (preg_match('/^SI/', $recipientReference) && substr_count($recipientReference, '-') > 2) {
-            throw new Exception("Recipient references that starts with SI should not have more than two dashes.");
+        if (0 === strpos($recipientReference, "SI") && substr_count($recipientReference, '-') > 2) {
+            throw new InvalidArgumentException("Recipient references that starts with SI should not have more than two dashes.");
         }
 
         $this->recipientReference = $recipientReference;
@@ -562,8 +567,8 @@ class UPNQR
     public function setRecipientName(?string $recipientName): self
     {
         $recipientName = trim($recipientName);
-        if ($recipientName !== null and mb_strlen($recipientName) > 33) {
-            throw new Exception("Recipient name must either be null or not have more than 33 characters.");
+        if (mb_strlen($recipientName) > 33) {
+            throw new InvalidArgumentException("Recipient name must either be null or not have more than 33 characters.");
         }
 
         $this->recipientName = $recipientName;
@@ -589,8 +594,8 @@ class UPNQR
     public function setRecipientStreetAddress(?string $recipientStreetAddress): self
     {
         $recipientStreetAddress = trim($recipientStreetAddress);
-        if ($recipientStreetAddress !== null and mb_strlen($recipientStreetAddress) > 33) {
-            throw new Exception("Recipient street address must either be null or not have more than 33 characters.");
+        if (mb_strlen($recipientStreetAddress) > 33) {
+            throw new InvalidArgumentException("Recipient street address must either be null or not have more than 33 characters.");
         }
 
         $this->recipientStreetAddress = $recipientStreetAddress;
@@ -610,21 +615,23 @@ class UPNQR
      * Recipient/payee city/location name
      * (sln. kraj prejemnika)
      * @param string $recipientCity
-     * @return void
+     * @return $this
      * @throws Exception
      */
-    public function setRecipientCity(string $recipientCity): void
+    public function setRecipientCity(string $recipientCity): self
     {
         $recipientCity = trim($recipientCity);
         if (mb_strlen($recipientCity) > 33) {
-            throw new Exception("Recipient city should not have more than 33 characters.");
+            throw new InvalidArgumentException("Recipient city should not have more than 33 characters.");
         }
 
         $this->recipientCity = $recipientCity;
+
+        return $this;
     }
 
     /**
-     * Format date from 'Y-m-d' to 'd.m.Y'
+     * Format date from "Y-m-d" to "d.m.Y"
      * @param string $date
      * @return string
      */

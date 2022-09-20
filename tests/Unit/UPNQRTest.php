@@ -62,9 +62,10 @@ class UPNQRTest extends TestCase
     }
 
     /**
+     * @return void
      * @throws Exception
      */
-    public function testGenerateQrCodeException()
+    public function testGenerateQrCodeException(): void
     {
         // We pass an invalid filename (typo in path)
         $this->expectException("Exception");
@@ -72,9 +73,10 @@ class UPNQRTest extends TestCase
     }
 
     /**
+     * @return void
      * @throws Exception
      */
-    public function testCheckRequiredParametersException()
+    public function testCheckRequiredParametersException(): void
     {
         // We instantiate the UPNQR object without setting the recipient IBAN number
         $UPNQR = new UPNQR();
@@ -105,15 +107,13 @@ class UPNQRTest extends TestCase
     }
 
     /**
+     * @return void
      * @throws Exception
      */
-    public function testFileOutput()
+    public function testFileOutput(): void
     {
-        try {
-            $this->QR->generateQrCode("./build/qrcode.svg");
-        } catch (Exception $e) {
-            throw new Exception("Error serializing QR contents or generating QR code image. " . $e->getMessage());
-        }
+        $this->QR->generateQrCode("./build/qrcode.svg");
+
         $this->assertFileExists("./build/qrcode.svg");
     }
 
@@ -121,7 +121,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testGeneratedImageContents()
+    public function testGeneratedImageContents(): void
     {
         $this->QR->generateQrCode('./build/qrcode.png');
         $qrcode = new QrReader("./build/qrcode.png");
@@ -132,7 +132,7 @@ class UPNQRTest extends TestCase
         $this->assertIsString($text);
 
         $explodedText = explode("\n", $text);
-        $this->assertSame($explodedText[0], UPNQR::VODILNI_SLOG);
+        $this->assertSame($explodedText[0], UPNQR::LEADING_STRING);
         $this->assertSame($explodedText[1], $this->QR->getPayerIban());
         $this->assertSame($explodedText[2], $this->QR->getDeposit() ? 'X' : '');
         $this->assertSame($explodedText[3], $this->QR->getWithdraw() ? 'X' : '');
@@ -157,7 +157,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testPayerIban()
+    public function testPayerIban(): void
     {
         $correctCases = [
             ["SI56020170014356205", "SI56020170014356205"],
@@ -190,7 +190,7 @@ class UPNQRTest extends TestCase
     /**
      * @return void
      */
-    public function testDeposit()
+    public function testDeposit(): void
     {
         $correctCases = [
             [true, "X"],
@@ -205,7 +205,7 @@ class UPNQRTest extends TestCase
     /**
      * @return void
      */
-    public function testWithdraw()
+    public function testWithdraw(): void
     {
         $correctCases = [
             [true, "X"],
@@ -221,7 +221,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testPayerReference()
+    public function testPayerReference(): void
     {
         $correctCases = [
             ["SI99123456789", "SI99123456789"],
@@ -262,7 +262,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testPayerName()
+    public function testPayerName(): void
     {
         $correctCases = [
             ["Mark", "Mark"],
@@ -293,7 +293,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testPayerStreetAddress()
+    public function testPayerStreetAddress(): void
     {
         $correctCases = [
             ["Koprska ulica 55", "Koprska ulica 55"],
@@ -323,7 +323,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testPayerCity()
+    public function testPayerCity(): void
     {
         $correctCases = [
             ["Koper", "Koper"],
@@ -353,7 +353,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testAmountUpnFormat()
+    public function testAmountUpnFormat(): void
     {
         $correctCases = [
             [1, "00000000100"],
@@ -387,7 +387,7 @@ class UPNQRTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testAmount()
+    public function testAmount(): void
     {
         $correctCases = [
             [1, 1],
@@ -404,7 +404,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testPaymentDateUpnFormat()
+    public function testPaymentDateUpnFormat(): void
     {
         $correctCases = [
             ["2022-01-01", "01.01.2022"],
@@ -439,7 +439,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testPaymentDate()
+    public function testPaymentDate(): void
     {
         $correctCases = [
             ["1970-01-01", "01.01.1970"],
@@ -456,7 +456,7 @@ class UPNQRTest extends TestCase
     /**
      * @return void
      */
-    public function testUrgent()
+    public function testUrgent(): void
     {
         $correctCases = [
             [true, "X"],
@@ -472,7 +472,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testPurposeCode()
+    public function testPurposeCode(): void
     {
         $correctCases = [
             ["COST", "COST"],
@@ -505,7 +505,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testPaymentPurpose()
+    public function testPaymentPurpose(): void
     {
         $correctCases = [
             ["Prenos sredstev", "Prenos sredstev"],
@@ -536,7 +536,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testPaymentDueDate()
+    public function testPaymentDueDate(): void
     {
         $correctCases = [
             ["2022-01-01", "01.01.2022"],
@@ -570,7 +570,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testRecipientIban()
+    public function testRecipientIban(): void
     {
         $correctCases = [
             ["SI56020170014356205", "SI56020170014356205"],
@@ -604,7 +604,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testRecipientReference()
+    public function testRecipientReference(): void
     {
         $correctCases = [
             ["SI99123456789", "SI99123456789"],
@@ -643,7 +643,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testRecipientName()
+    public function testRecipientName(): void
     {
         $correctCases = [
             ["Mark", "Mark"],
@@ -674,7 +674,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testRecipientStreetAddress()
+    public function testRecipientStreetAddress(): void
     {
         $correctCases = [
             ["Koprska ulica 55", "Koprska ulica 55"],
@@ -704,7 +704,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testRecipientCity()
+    public function testRecipientCity(): void
     {
         $correctCases = [
             ["Koper", "Koper"],
@@ -734,7 +734,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testNullableParameters()
+    public function testNullableParameters(): void
     {
         $qr = new UPNQR();
 
@@ -795,7 +795,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testMinimal()
+    public function testMinimal(): void
     {
         if (file_exists("./build/minimalQr.svg")) {
             unlink("./build/minimalQr.svg");
@@ -815,7 +815,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testFileOutputs()
+    public function testFileOutputs(): void
     {
         $svgFilename = "./build/qrOutputType.svg";
         $pngFilename = "./build/qrOutputType.png";
@@ -861,7 +861,7 @@ class UPNQRTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testInvalidFileExtension()
+    public function testInvalidFileExtension(): void
     {
         $qr = new UPNQR();
 
