@@ -33,25 +33,27 @@ The minimal required parameters are based on the Android applications ISPS and B
 See class docblocks for accepted parameter formats and length.
 
 ### Sample code
+This code shows a typical use-case. See the UPNQR class for more stuff you can put into the QR code.
 ```php
 // Create an instance of the UPNQR class
 $QR = new UPNQR();
 
-// Set parameters
-$QR->setPayerReference("SI00225268-32526-222");
-$QR->setPayerName("Janez Novak");
-$QR->setPayerStreetAddress("Lepa ulica 33");
-$QR->setPayerCity("Koper");
-$QR->setAmount(55.58);
-$QR->setPaymentDate("2022-06-16");
-$QR->setUrgent(false);
-$QR->setPurposeCode("GDSV");
-$QR->setPaymentPurpose("Predračun 111");
-$QR->setRecipientIban("SI56020360253863406");
-$QR->setRecipientReference("SI081236-17-34565");
-$QR->setRecipientName("Podjetje d.o.o.");
-$QR->setRecipientStreetAddress("Neka ulica 5");
-$QR->setRecipientCity("Ljubljana");
+// Set payer
+$QR ->setPayerName("Janez Novak")
+    ->setPayerStreetAddress("Lepa ulica 33")
+    ->setPayerCity("Koper");
+
+// Set recipient
+$QR ->setRecipientIban("SI56020360253863406")
+    ->setRecipientName("Podjetje d.o.o.")
+    ->setRecipientStreetAddress("Neka ulica 5")
+    ->setRecipientCity("Ljubljana");
+
+// Transaction details
+$QR ->setAmount(55.58)
+    ->setRecipientReference("SI081236-17-34565")
+    ->setPurposeCode("GDSV")
+    ->setPaymentPurpose("Plačilo spletnega naročila št. 304");
 
 try {
     // Generate QR code image of type svg (use .png for PNG images)
@@ -61,6 +63,9 @@ try {
 }
 
 ```
+The above code will generate this QR code:
+
+<img src="assets/example.svg" width="200px" alt="QR code example"/>
 
 ## Contributing
 If you have some suggestions how to make this package better, please open an issue or even better, submit a pull request.

@@ -873,4 +873,41 @@ class UPNQRTest extends TestCase
         // we set an invalid file extension (.sv instead of .svg)
         $qr->generateQrCode("./build/invalidQr.sv");
     }
+
+    /**
+     * This method tests the example that is documented in the readme file.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function testExample(): void
+    {
+        $QR = new UPNQR();
+
+        // Set payer
+        $QR ->setPayerName("Janez Novak")
+            ->setPayerStreetAddress("Lepa ulica 33")
+            ->setPayerCity("Koper");
+
+        // Set recipient
+        $QR ->setRecipientIban("SI56020360253863406")
+            ->setRecipientName("Podjetje d.o.o.")
+            ->setRecipientStreetAddress("Neka ulica 5")
+            ->setRecipientCity("Ljubljana");
+
+        // Transaction details
+        $QR ->setAmount(55.58)
+            ->setRecipientReference("SI081236-17-34565")
+            ->setPurposeCode("GDSV")
+            ->setPaymentPurpose("Plačilo spletnega naročila št. 304");
+
+        try {
+            // Generate QR code image of type svg (use .png for PNG images)
+            $QR->generateQrCode("./assets/example.svg");
+        } catch (Exception $e) {
+            throw new Exception("Error generating QR code image: " . $e->getMessage());
+        }
+
+        $this->assertFileExists("./assets/example.svg");
+    }
 }
