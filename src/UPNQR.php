@@ -375,7 +375,7 @@ class UPNQR
         if ($paymentDate && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $paymentDate)) {
             throw new InvalidArgumentException("Payment date must either be null or be in the YYYY-MM-DD format.");
         }
-        if ($paymentDate && !strtotime($paymentDate)) {
+        if ($paymentDate && strtotime($paymentDate) === false) {
             throw new InvalidArgumentException("The provided payment date is not a valid date.");
         }
 

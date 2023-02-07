@@ -441,15 +441,15 @@ class UPNQRTest extends TestCase
      */
     public function testPaymentDate(): void
     {
-        $correctCases = [
-            ["1970-01-01", "01.01.1970"],
-            ["2022-06-01", "01.06.2022"],
-            ["2500-12-12", "12.12.2500"],
+        $cases = [
+            "1970-01-01" => "01.01.1970",
+            "2022-06-01" => "01.06.2022",
+            "2500-12-12" => "12.12.2500",
         ];
 
-        foreach ($correctCases as $case) {
-            $this->QRR->setPaymentDate($case[0]);
-            $this->assertEquals($case[1], $this->QRR->formatDate($this->QRR->getPaymentDate()));
+        foreach ($cases as $original => $formatted) {
+            $this->QRR->setPaymentDate($original);
+            $this->assertEquals($formatted, $this->QRR->formatDate($this->QRR->getPaymentDate()));
         }
     }
 
