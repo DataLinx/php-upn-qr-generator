@@ -1,14 +1,20 @@
-* text=auto
+# Path-based git attributes
+# https://www.kernel.org/pub/software/scm/git/docs/gitattributes.html
 
-*.css diff=css
-*.html diff=html
-*.md diff=markdown
-*.php diff=php
-
-# Ignore development folders and files when deploying with "--preferdist" composer option
+# Ignore all development content with "export-ignore".
+/.github export-ignore
+/.husky export-ignore
+/assets export-ignore
+/config export-ignore
+/docs export-ignore
 /tests export-ignore
+
 /.editorconfig export-ignore
 /.gitattributes export-ignore
 /.gitignore export-ignore
-/build.sh export-ignore
+/.lando.dist.yml export-ignore
+/.php-cs-fixer.dist.php export-ignore
+/commitlint.config.js export-ignore
+/package.json export-ignore
+/package-lock.json export-ignore
 /phpunit.xml.dist export-ignore
