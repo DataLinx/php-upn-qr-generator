@@ -1,0 +1,21 @@
+name: php-upn-qr-generator
+services:
+  appserver:
+    type: php:8.1
+    via: cli
+    webroot: .
+    xdebug: "debug,coverage,develop"
+    overrides:
+      environment:
+        # Support debugging CLI with XDEBUG.
+        PHP_IDE_CONFIG: "serverName=appserver"
+        XDEBUG_SESSION_START: lando
+tooling:
+  php:
+    service: appserver
+  composer:
+    service: appserver
+  phpunit:
+    service: appserver
+    description: Run PHPUnit tests
+    cmd: "/app/vendor/bin/phpunit"
