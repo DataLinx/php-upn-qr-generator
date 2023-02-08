@@ -2,10 +2,10 @@
 
 ![Packagist Version](https://img.shields.io/packagist/v/datalinx/php-upn-qr-generator)
 ![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/datalinx/php-upn-qr-generator)
-![Coverage 100%](assets/coverage.svg)
-![Packagist License](https://img.shields.io/packagist/l/datalinx/php-upn-qr-generator)
+[![codecov](https://codecov.io/gh/DataLinx/php-upn-qr-generator/branch/master/graph/badge.svg?token=VOYIGEPWA5)](https://codecov.io/gh/DataLinx/php-upn-qr-generator)
 ![Packagist Downloads](https://img.shields.io/packagist/dt/datalinx/php-upn-qr-generator)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+![Packagist License](https://img.shields.io/packagist/l/datalinx/php-upn-qr-generator)
 
 ## About
 Using this library you can generate a QR code for a UPN payment order, which is used in Slovenia. The technical specification is defined by the Slovenian Bank Association.
