@@ -1,0 +1,42 @@
+name: Update codecov
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  codecov:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install composer and dependencies
+        uses: php-actions/composer@v6
+        with:
+          php_extensions: mbstring
+
+      - name: PHPUnit Tests
+        uses: php-actions/phpunit@v3
+        env:
+          XDEBUG_MODE: coverage
+        with:
+          configuration: phpunit.xml.dist
+          version: 9
+          php_version: 8.1
+          php_extensions: mbstring xdebug
+          args: --coverage-clover ./coverage.xml
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          files: ./coverage.xml
+          verbose: true
