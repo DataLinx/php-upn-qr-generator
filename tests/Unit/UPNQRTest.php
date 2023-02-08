@@ -50,7 +50,7 @@ class UPNQRTest extends TestCase
         parent::setUp();
 
         // Create build folder if it doesn't exist
-        if (!file_exists("build")) {
+        if (! file_exists("build")) {
             mkdir("build");
         }
 

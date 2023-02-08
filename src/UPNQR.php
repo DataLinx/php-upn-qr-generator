@@ -93,12 +93,15 @@ class UPNQR
                 case 'svg':
                     $imageBackEnd = new SvgImageBackEnd();
                     break;
+
                 case 'png':
                     $imageBackEnd = new ImagickImageBackEnd();
                     break;
+
                 case 'eps':
                     $imageBackEnd = new EpsImageBackEnd();
                     break;
+
                 default:
                     throw new InvalidArgumentException("Please provide a valid path with a supported extension (.png, .svg or .eps).");
             }
@@ -128,7 +131,7 @@ class UPNQR
         ];
 
         foreach ($params as $param) {
-            if (!isset($this->{$param})) {
+            if (! isset($this->{$param})) {
                 throw new InvalidArgumentException("$param is required.");
             }
         }
@@ -152,7 +155,7 @@ class UPNQR
     public function setPayerIban(?string $payerIban): self
     {
         $payerIban = trim(str_replace(' ', '', $payerIban));
-        if ($payerIban && !preg_match('/^[a-z]{2}\d{17}$/i', $payerIban)) {
+        if ($payerIban && ! preg_match('/^[a-z]{2}\d{17}$/i', $payerIban)) {
             throw new InvalidArgumentException("Payer IBAN must either be null or have 19 characters with the country code prefix of two characters (alpha-2 ISO standard).");
         }
 
@@ -187,7 +190,7 @@ class UPNQR
      */
     public function getWithdraw(): ?bool
     {
-        return $this->withdraw  ?? null;
+        return $this->withdraw ?? null;
     }
 
     /**
@@ -221,7 +224,7 @@ class UPNQR
     public function setPayerReference(?string $payerReference): self
     {
         $payerReference = trim($payerReference);
-        if ($payerReference && !preg_match('/^(SI|RF)\d{2}/', $payerReference)) {
+        if ($payerReference && ! preg_match('/^(SI|RF)\d{2}/', $payerReference)) {
             throw new InvalidArgumentException("Payer reference must either be null or start with SI or RF and then 2 digits and other digits or characters.");
         }
         if (mb_strlen($payerReference) > 26) {
@@ -372,7 +375,7 @@ class UPNQR
     public function setPaymentDate(?string $paymentDate): self
     {
         $paymentDate = trim($paymentDate);
-        if ($paymentDate && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $paymentDate)) {
+        if ($paymentDate && ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $paymentDate)) {
             throw new InvalidArgumentException("Payment date must either be null or be in the YYYY-MM-DD format.");
         }
         if ($paymentDate && strtotime($paymentDate) === false) {
@@ -423,7 +426,7 @@ class UPNQR
     public function setPurposeCode(?string $purposeCode): self
     {
         $purposeCode = trim($purposeCode);
-        if ($purposeCode && !preg_match('/^[A-Z]{4}$/', $purposeCode)) {
+        if ($purposeCode && ! preg_match('/^[A-Z]{4}$/', $purposeCode)) {
             throw new InvalidArgumentException("Purpose code must be null or have exactly four uppercase characters [A-Z].");
         }
 
@@ -477,10 +480,10 @@ class UPNQR
     public function setPaymentDueDate(?string $paymentDueDate): self
     {
         $paymentDueDate = trim($paymentDueDate);
-        if ($paymentDueDate && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $paymentDueDate)) {
+        if ($paymentDueDate && ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $paymentDueDate)) {
             throw new InvalidArgumentException("Payment due date must either be null or be in the YYYY-MM-DD format.");
         }
-        if ($paymentDueDate && !strtotime($paymentDueDate)) {
+        if ($paymentDueDate && ! strtotime($paymentDueDate)) {
             throw new InvalidArgumentException("The provided payment due date is not a valid date.");
         }
 
@@ -507,7 +510,7 @@ class UPNQR
     public function setRecipientIban(string $recipientIban): self
     {
         $recipientIban = trim(str_replace(' ', '', $recipientIban));
-        if (!preg_match('/^[a-z]{2}\d{17}$/i', $recipientIban)) {
+        if (! preg_match('/^[a-z]{2}\d{17}$/i', $recipientIban)) {
             throw new InvalidArgumentException("Recipient IBAN must be 19 characters long with the country code prefix of two characters (alpha-2 ISO standard).");
         }
 
@@ -534,7 +537,7 @@ class UPNQR
     public function setRecipientReference(?string $recipientReference): self
     {
         $recipientReference = trim($recipientReference);
-        if ($recipientReference && !preg_match('/^(SI|RF)\d{2}/', $recipientReference)) {
+        if ($recipientReference && ! preg_match('/^(SI|RF)\d{2}/', $recipientReference)) {
             throw new InvalidArgumentException("Recipient reference must either be null or start with SI or RF and then 2 digits and other digits or characters.");
         }
         if (mb_strlen($recipientReference) > 26) {
