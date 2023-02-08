@@ -22,7 +22,7 @@ jobs:
       - name: Install composer and dependencies
         uses: php-actions/composer@v6
         with:
-          php_extensions: mbstring
+          php_extensions: mbstring iconv
 
       - name: PHPUnit Tests
         uses: php-actions/phpunit@v3
@@ -32,7 +32,7 @@ jobs:
           configuration: phpunit.xml.dist
           version: 9
           php_version: 8.1
-          php_extensions: mbstring xdebug
+          php_extensions: mbstring iconv imagick xdebug
           args: --coverage-clover ./coverage.xml
 
       - name: Upload to Codecov
