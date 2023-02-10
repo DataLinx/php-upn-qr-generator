@@ -1,9 +1,10 @@
 # UPN QR code generator for PHP
 
-![Packagist Version](https://img.shields.io/packagist/v/datalinx/php-upn-qr-generator)
 ![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/datalinx/php-upn-qr-generator)
-[![codecov](https://codecov.io/gh/DataLinx/php-upn-qr-generator/branch/master/graph/badge.svg?token=VOYIGEPWA5)](https://codecov.io/gh/DataLinx/php-upn-qr-generator)
+[![Packagist Version](https://img.shields.io/packagist/v/datalinx/php-upn-qr-generator)](https://packagist.org/packages/datalinx/php-upn-qr-generator)
 ![Packagist Downloads](https://img.shields.io/packagist/dt/datalinx/php-upn-qr-generator)
+[![codecov](https://codecov.io/gh/DataLinx/php-upn-qr-generator/branch/master/graph/badge.svg?token=VOYIGEPWA5)](https://codecov.io/gh/DataLinx/php-upn-qr-generator)
+[![Tests](https://github.com/DataLinx/php-upn-qr-generator/actions/workflows/run-tests.yml/badge.svg)](https://github.com/DataLinx/php-upn-qr-generator/actions/workflows/run-tests.yml)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 ![Packagist License](https://img.shields.io/packagist/l/datalinx/php-upn-qr-generator)
 
@@ -65,7 +66,7 @@ try {
 ```
 The above code will generate this QR code:
 
-<img src="assets/example.svg" width="200px" alt="QR code example"/>
+<img src="docs/example.svg" width="200px" alt="QR code example"/>
 
 ## Contributing
 If you have some suggestions how to make this package better, please open an issue or even better, submit a pull request.
