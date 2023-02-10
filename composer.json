@@ -1,7 +1,12 @@
 {
     "name": "datalinx/php-upn-qr-generator",
     "description": "QR code generator for Slovenian UPN payment order",
-    "keywords": ["QR code", "UPN", "payment order", "Slovenia"],
+    "keywords": [
+        "QR code",
+        "UPN",
+        "payment order",
+        "Slovenia"
+    ],
     "type": "library",
     "license": "MIT",
     "authors": [
