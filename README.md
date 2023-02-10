@@ -12,11 +12,10 @@ Using this library you can generate a QR code for a UPN payment order, which is 
 
 This library can output a PNG, SVG or EPS image to a local file.
 
-See the changelog [here](CHANGELOG.md).
-
 ## Requirements
 - PHP >= 7.4
-- mbstring PHP extension
+- mbstring and iconv PHP extensions
+- imagick PHP extension, but only if you want to generate PNG (raster) QR code images — not required for vector formats (SVG, EPS)
 
 ## Installing
 Download it with composer:
@@ -77,3 +76,11 @@ The code is fully tested, including OCRing of the generated QR code.
 
 ### Developer documentation
 * [QR code technical specification](https://upn-qr.si/uploads/files/Tehnicni%20standard%20UPN%20QR.pdf) (see chapter 5.2)
+
+### Changelog
+All notable changes to this project are automatically documented in the [CHANGELOG.md](CHANGELOG.md) file using the release workflow, based on the [release-please](https://github.com/googleapis/release-please) GitHub action.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+For all this to work, commit messages must follow the [Conventional commits](https://www.conventionalcommits.org/) specification, which is also enforced by a Git hook. 
