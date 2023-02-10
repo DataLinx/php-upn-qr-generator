@@ -114,7 +114,7 @@ class UPNQR
             $writer = new Writer($renderer);
             $writer->writeFile($this->serializeContents(), $filename, "ISO-8859-2");
         } catch (Exception $exception) {
-            throw new RuntimeException("Beacon QR code threw an exception: " . $exception->getMessage());
+            throw new RuntimeException("Bacon QR code threw an exception: " . $exception->getMessage());
         }
     }
 

@@ -868,7 +868,7 @@ class UPNQRTest extends TestCase
         $qr->setRecipientIban("SI56020360253863406");
         $qr->setRecipientCity("Ljubljana");
 
-        $this->expectExceptionMessage("Beacon QR code threw an exception: Please provide a valid path with a supported extension (.png, .svg or .eps).");
+        $this->expectExceptionMessage("Bacon QR code threw an exception: Please provide a valid path with a supported extension (.png, .svg or .eps).");
 
         // we set an invalid file extension (.sv instead of .svg)
         $qr->generateQrCode("./build/invalidQr.sv");
