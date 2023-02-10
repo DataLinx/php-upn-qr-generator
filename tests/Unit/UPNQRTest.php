@@ -903,11 +903,11 @@ class UPNQRTest extends TestCase
 
         try {
             // Generate QR code image of type svg (use .png for PNG images)
-            $QR->generateQrCode("./assets/example.svg");
+            $QR->generateQrCode("./docs/example.svg");
         } catch (Exception $e) {
             throw new Exception("Error generating QR code image: " . $e->getMessage());
         }
 
-        $this->assertFileExists("./assets/example.svg");
+        $this->assertFileExists("./docs/example.svg");
     }
 }
