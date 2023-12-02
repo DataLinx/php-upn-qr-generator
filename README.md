@@ -1,17 +1,19 @@
 # UPN QR code generator for PHP
 
-![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/datalinx/php-upn-qr-generator)
 [![Packagist Version](https://img.shields.io/packagist/v/datalinx/php-upn-qr-generator)](https://packagist.org/packages/datalinx/php-upn-qr-generator)
+![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/datalinx/php-upn-qr-generator)
 ![Packagist Downloads](https://img.shields.io/packagist/dt/datalinx/php-upn-qr-generator)
+[![Test runner](https://github.com/DataLinx/php-upn-qr-generator/actions/workflows/test-runner.yml/badge.svg)](https://github.com/DataLinx/php-upn-qr-generator/actions/workflows/test-runner.yml)
 [![codecov](https://codecov.io/gh/DataLinx/php-upn-qr-generator/branch/master/graph/badge.svg?token=VOYIGEPWA5)](https://codecov.io/gh/DataLinx/php-upn-qr-generator)
-[![Tests](https://github.com/DataLinx/php-upn-qr-generator/actions/workflows/run-tests.yml/badge.svg)](https://github.com/DataLinx/php-upn-qr-generator/actions/workflows/run-tests.yml)
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 ![Packagist License](https://img.shields.io/packagist/l/datalinx/php-upn-qr-generator)
 
 ## About
 Using this library you can generate a QR code for a UPN payment order, which is used in Slovenia. The technical specification is defined by the Slovenian Bank Association.
 
 This library can output a PNG, SVG or EPS image to a local file.
+
+The code is fully tested, including OCRing of the generated QR code.
 
 ## Requirements
 - PHP >= 7.4
@@ -71,9 +73,7 @@ The above code will generate this QR code:
 ## Contributing
 If you have some suggestions how to make this package better, please open an issue or even better, submit a pull request.
 
-The project adheres to the PSR-4 and PSR-12 standards.
-
-The code is fully tested, including OCRing of the generated QR code.
+Should you want to contribute, please see the development guidelines in the [DataLinx PHP package template](https://github.com/DataLinx/php-package-template).
 
 ### Developer documentation
 * [QR code technical specification](https://upn-qr.si/uploads/files/Tehnicni%20standard%20UPN%20QR.pdf) (see chapter 5.2)
