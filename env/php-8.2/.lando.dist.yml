@@ -1,0 +1,26 @@
+name: php-upn-qr-generator-php-8.2
+services:
+  appserver:
+    type: php:custom
+    via: cli
+    app_mount: delegated
+    overrides:
+      image: slimdeluxe/php:8.2
+      volumes:
+        # Mount the project root directory to /app
+        - "../..:/app"
+        # Prevent the source vendor directory to be mounted
+        - /app/vendor
+        # Make available the source composer.json to be used by the merged one
+        - "../../composer.json:/usr/local/src/composer.json"
+        # Use the merged composer.json instead of the source one
+        - "./composer.json:/app/composer.json"
+tooling:
+  php:
+    service: appserver
+  composer:
+    service: appserver
+  test:
+    service: appserver
+    description: Run tests
+    cmd: "composer run-script test"

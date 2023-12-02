@@ -1,0 +1,29 @@
+{
+    "require": {
+        "wikimedia/composer-merge-plugin": "dev-master"
+    },
+    "extra": {
+        "merge-plugin": {
+            "require": [
+                "/usr/local/src/composer.json"
+            ],
+            "merge-scripts": true
+        }
+    },
+    "config": {
+        "lock": false,
+        "allow-plugins": {
+            "wikimedia/composer-merge-plugin": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "DataLinx\\PhpUpnQrGenerator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DataLinx\\PhpUpnQrGenerator\\Tests\\": "tests/"
+        }
+    }
+}
