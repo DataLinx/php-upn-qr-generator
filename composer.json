@@ -7,6 +7,7 @@
         "payment order",
         "Slovenia"
     ],
+    "homepage": "https://github.com/datalinx/php-upn-qr-generator",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -15,10 +16,10 @@
             "email": "info@datalinx.si"
         }
     ],
-    "minimum-stability": "stable",
     "config": {
         "sort-packages": true
     },
+    "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
             "DataLinx\\PhpUpnQrGenerator\\": "src/"
@@ -40,7 +41,7 @@
         "friendsofphp/php-cs-fixer": "^3.14"
     },
     "scripts": {
-        "test": "vendor/bin/phpunit",
-        "format": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --allow-risky=yes"
+        "format": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --allow-risky=yes",
+        "test": "vendor/bin/phpunit"
     }
 }

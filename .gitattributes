@@ -4,9 +4,8 @@
 # Ignore all development content with "export-ignore".
 /.github export-ignore
 /.husky export-ignore
-/assets export-ignore
-/config export-ignore
 /docs export-ignore
+/env export-ignore
 /tests export-ignore
 
 /.editorconfig export-ignore
