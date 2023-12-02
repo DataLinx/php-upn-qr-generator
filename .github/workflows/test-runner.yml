@@ -1,0 +1,71 @@
+name: Test runner
+
+on:
+  # Run testing on all push and pull requests for the master branch that have committed changes in PHP files
+  push:
+    branches: [ "master" ]
+    paths:
+      - '**.php'
+  pull_request:
+    branches: [ "master" ]
+    paths:
+      - '**.php'
+  # Make it possible to run the workflow manually
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+
+    runs-on: ${{ matrix.os }}
+
+    # Define the matrix of different PHP and dependency versions
+    strategy:
+      # Fail the whole workflow if one of the jobs fails
+      fail-fast: true
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+        php: [ 7.4, 8.0, 8.1 ]
+        dependency-version: [ prefer-lowest, prefer-stable ]
+
+    name: ${{ matrix.os }} / PHP ${{ matrix.php }} / ${{ matrix.dependency-version }}
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ matrix.php }}-${{ matrix.dependency-version }}-${{ hashFiles('**/composer.lock') }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: xdebug
+          extensions: mbstring, iconv, imagick
+
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-progress --${{ matrix.dependency-version }}
+
+      - name: Run test suite
+        run: ./vendor/bin/phpunit --coverage-clover ./coverage.xml
+
+      - name: Upload coverage reports to Codecov
+        # Make sure the Codecov action is only executed once
+        if: matrix.os == 'ubuntu-latest' && matrix.php == '8.1' && matrix.dependency-version == 'prefer-stable'
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml
+          verbose: true
