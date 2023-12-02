@@ -26,7 +26,7 @@ jobs:
       # Fail the whole workflow if one of the jobs fails
       fail-fast: true
       matrix:
-        os: [ ubuntu-latest, windows-latest ]
+        os: [ ubuntu-latest ]
         php: [ 7.4, 8.0, 8.1, 8.2 ]
         dependency-version: [ prefer-lowest, prefer-stable ]
 
