@@ -43,5 +43,10 @@
     "scripts": {
         "format": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --allow-risky=yes",
         "test": "vendor/bin/phpunit"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-v2": "v2.x-dev"
+        }
     }
 }
