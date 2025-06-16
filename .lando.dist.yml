@@ -1,10 +1,11 @@
+#file: noinspection ComposeUnknownKeys
 name: php-upn-qr-generator
 services:
   appserver:
     type: php:custom
     via: cli
     overrides:
-      image: slimdeluxe/php:7.4
+      image: slimdeluxe/php:8.1-v1.2
 tooling:
   php:
     service: appserver
