@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/DataLinx/php-upn-qr-generator/compare/v1.1.2...v2.0.0) (2025-06-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* update PHP and bacon-qr-code versions
+
+### Build System
+
+* update PHP and bacon-qr-code versions ([53170e6](https://github.com/DataLinx/php-upn-qr-generator/commit/53170e6faa384db49ee50c437009d467c9367382))
+
 ## [1.1.2](https://github.com/DataLinx/php-upn-qr-generator/compare/v1.1.1...v1.1.2) (2023-02-10)
 
 
