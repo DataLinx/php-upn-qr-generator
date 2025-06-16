@@ -1,7 +1,5 @@
 # UPN QR code generator for PHP
 
-[![Packagist Version](https://img.shields.io/packagist/v/datalinx/php-upn-qr-generator)](https://packagist.org/packages/datalinx/php-upn-qr-generator)
-![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/datalinx/php-upn-qr-generator)
 ![Packagist Downloads](https://img.shields.io/packagist/dt/datalinx/php-upn-qr-generator)
 [![Test runner](https://github.com/DataLinx/php-upn-qr-generator/actions/workflows/test-runner.yml/badge.svg?branch=master)](https://github.com/DataLinx/php-upn-qr-generator/actions/workflows/test-runner.yml)
 [![codecov](https://codecov.io/gh/DataLinx/php-upn-qr-generator/graph/badge.svg?token=VOYIGEPWA5)](https://codecov.io/gh/DataLinx/php-upn-qr-generator)
@@ -16,7 +14,7 @@ This library can output a PNG, SVG or EPS image to a local file.
 The code is fully tested, including OCRing of the generated QR code.
 
 ## Requirements
-- PHP >= 8.1
+- PHP >= 7.4 (see versions below)
 - mbstring and iconv PHP extensions
 - imagick PHP extension, but only if you want to generate PNG (raster) QR code images — not required for vector formats (SVG, EPS)
 
